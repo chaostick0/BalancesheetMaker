@@ -1,10 +1,23 @@
 import csv
 import sqlite3
 from io import StringIO
-from flask import Flask, Response, render_template, request, redirect
-from database import initialize_database
+from flask import Flask, Response, redirect, render_template, request, flash
+from database import (
+    delete_balance_sheet_row,
+    get_balance_sheet_rows,
+    get_balance_sheet_totals,
+    get_company,
+    import_balance_sheet_from_csv,
+    initialize_database,
+    insert_balance_sheet_row,
+    normalize_amount,
+    round_amount,
+    save_balance_sheet_values,
+    upsert_company,
+)
 
 app = Flask(__name__)
+app.secret_key = "balancesheet-maker-secret"
 
 initialize_database()
 
@@ -15,46 +28,23 @@ if __name__ == "__main__":
 
 @app.route("/")
 def dashboard():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
+    company = get_company()
+    assets_totals = get_balance_sheet_totals("ASSETS")
+    liabilities_totals = get_balance_sheet_totals("LIABILITIES")
 
-    cursor.execute("SELECT * FROM company LIMIT 1")
-    company = cursor.fetchone()
+    assets_current = assets_totals["current_amount"]
+    assets_previous = assets_totals["previous_amount"]
+    liabilities_current = liabilities_totals["current_amount"]
+    liabilities_previous = liabilities_totals["previous_amount"]
 
-    cursor.execute("""
-        SELECT SUM(current_amount), SUM(previous_amount)
-        FROM balance_sheet
-        WHERE section='ASSETS'
-    """)
-    asset_totals = cursor.fetchone()
+    current_difference = round_amount(assets_current - liabilities_current)
+    previous_difference = round_amount(assets_previous - liabilities_previous)
+    balanced = abs(current_difference) < 0.01 and abs(previous_difference) < 0.01
+    status_message = "Balanced" if balanced else f"Difference: ₹ {current_difference:,.2f}"
 
-    cursor.execute("""
-        SELECT SUM(current_amount), SUM(previous_amount)
-        FROM balance_sheet
-        WHERE section IN ('EQUITY AND LIABILITIES', 'LIABILITIES')
-    """)
-    liability_totals = cursor.fetchone()
-
-    conn.close()
-
-    assets_current = (asset_totals[0] if asset_totals and asset_totals[0] is not None else 0)
-    assets_previous = (asset_totals[1] if asset_totals and asset_totals[1] is not None else 0)
-
-    liabilities_current = (liability_totals[0] if liability_totals and liability_totals[0] is not None else 0)
-    liabilities_previous = (liability_totals[1] if liability_totals and liability_totals[1] is not None else 0)
-
-    current_difference = assets_current - liabilities_current
-    previous_difference = assets_previous - liabilities_previous
-
-    balanced = (
-    abs(current_difference) < 0.01 and
-    abs(previous_difference) < 0.01
-    )
-    status_message = (
-    "Balanced"
-    if balanced
-    else f"Difference: ₹ {current_difference:,.2f}"
-    )
+    trend_message = "Improving" if current_difference <= 0 else "Needs review"
+    if not balanced:
+        trend_message = "Drifting" if abs(current_difference) > 10000 else "Needs review"
 
     return render_template(
         "dashboard.html",
@@ -66,152 +56,137 @@ def dashboard():
         current_difference=current_difference,
         previous_difference=previous_difference,
         balanced=balanced,
-        status_message=status_message
+        status_message=status_message,
+        trend_message=trend_message,
     )
 
 
 @app.route("/company")
 def company():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM company LIMIT 1")
-    company = cursor.fetchone()
-    conn.close()
+    company = get_company()
     return render_template("company.html", company=company)
 
 
 @app.route("/save-company", methods=["POST"])
 def save_company():
-    company_name = request.form["company_name"]
-    balance_sheet_date = request.form["balance_sheet_date"]
-    currency = request.form["currency"]
-    current_year = request.form["current_year"]
-    previous_year = request.form["previous_year"]
-
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM company")
-    cursor.execute("""
-        INSERT INTO company(
-            company_name,balance_sheet_date,currency,current_year,previous_year
-        ) VALUES (?,?,?,?,?)
-    """, (company_name,balance_sheet_date,currency,current_year,previous_year))
-    conn.commit()
-    conn.close()
+    data = {
+        "company_name": request.form.get("company_name", ""),
+        "balance_sheet_date": request.form.get("balance_sheet_date", ""),
+        "currency": request.form.get("currency", ""),
+        "current_year": request.form.get("current_year", ""),
+        "previous_year": request.form.get("previous_year", ""),
+    }
+    try:
+        upsert_company(data)
+        flash("Company details saved successfully.", "success")
+    except ValueError as exc:
+        flash(str(exc), "danger")
     return redirect("/company")
 
 
 @app.route("/assets")
 def assets():
+    rows = get_balance_sheet_rows(section="ASSETS")
+    return render_template("assets.html", assets=rows, group_totals=[])
 
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT
-            id,
-            group_name,
-            item_name,
-            note_no,
-            current_amount,
-            previous_amount
-        FROM balance_sheet
-        WHERE section='ASSETS'
-        ORDER BY group_name, note_no
-    """)
+@app.route("/add-asset", methods=["POST"])
+def add_asset():
+    section = "ASSETS"
+    group_name = request.form.get("group_name", "Custom Group").strip() or "Custom Group"
+    item_name = request.form.get("item_name", "").strip()
+    note_no = request.form.get("note_no", "").strip() or ""
+    if not item_name:
+        flash("Please enter an asset name.", "danger")
+        return redirect("/assets")
+    insert_balance_sheet_row(section, group_name, item_name, note_no)
+    flash("Asset row added successfully.", "success")
+    return redirect("/assets")
 
-    assets = cursor.fetchall()
 
-    cursor.execute("""
-        SELECT
-            group_name,
-            SUM(current_amount),
-            SUM(previous_amount)
-        FROM balance_sheet
-        WHERE section='ASSETS'
-        GROUP BY group_name
-    """)
-
-    group_totals = cursor.fetchall()
-
-    conn.close()
-
-    return render_template(
-        "assets.html",
-        assets=assets,
-        group_totals=group_totals
-    )
+@app.route("/remove-asset/<int:item_id>", methods=["POST"])
+def remove_asset(item_id):
+    if delete_balance_sheet_row(item_id):
+        flash("Asset row removed successfully.", "success")
+    else:
+        flash("Unable to remove that asset row.", "danger")
+    return redirect("/assets")
 
 
 @app.route("/save-assets", methods=["POST"])
 def save_assets():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM balance_sheet WHERE section='ASSETS'")
-    for (item_id,) in cursor.fetchall():
-        current = request.form.get(f"current_{item_id}", 0)
-        previous = request.form.get(f"previous_{item_id}", 0)
-        cursor.execute(
-            "UPDATE balance_sheet SET current_amount=?, previous_amount=? WHERE id=?",
-            (current, previous, item_id),
-        )
-    conn.commit()
-    conn.close()
+    payload = {}
+    for key, value in request.form.items():
+        if key.startswith("current_"):
+            item_id = key.split("_", 1)[1]
+            payload.setdefault(item_id, {})["current_amount"] = value
+        elif key.startswith("previous_"):
+            item_id = key.split("_", 1)[1]
+            payload.setdefault(item_id, {})["previous_amount"] = value
+
+    try:
+        save_balance_sheet_values("ASSETS", payload)
+        flash("Assets updated successfully.", "success")
+    except ValueError as exc:
+        flash(str(exc), "danger")
     return redirect("/assets")
 
 
 @app.route("/liabilities")
 def liabilities():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT * FROM balance_sheet
-        WHERE section IN ('EQUITY AND LIABILITIES', 'LIABILITIES')
-        ORDER BY group_name,note_no
-    """)
-    liabilities = cursor.fetchall()
-    conn.close()
-    return render_template("liabilities.html", liabilities=liabilities)
+    rows = get_balance_sheet_rows(section="LIABILITIES")
+    return render_template("liabilities.html", liabilities=rows)
+
+
+@app.route("/add-liability", methods=["POST"])
+def add_liability():
+    section = "LIABILITIES"
+    group_name = request.form.get("group_name", "Custom Group").strip() or "Custom Group"
+    item_name = request.form.get("item_name", "").strip()
+    note_no = request.form.get("note_no", "").strip() or ""
+    if not item_name:
+        flash("Please enter a liability name.", "danger")
+        return redirect("/liabilities")
+    insert_balance_sheet_row(section, group_name, item_name, note_no)
+    flash("Liability row added successfully.", "success")
+    return redirect("/liabilities")
+
+
+@app.route("/remove-liability/<int:item_id>", methods=["POST"])
+def remove_liability(item_id):
+    if delete_balance_sheet_row(item_id):
+        flash("Liability row removed successfully.", "success")
+    else:
+        flash("Unable to remove that liability row.", "danger")
+    return redirect("/liabilities")
 
 
 @app.route("/save-liabilities", methods=["POST"])
 def save_liabilities():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM balance_sheet WHERE section IN ('EQUITY AND LIABILITIES', 'LIABILITIES')")
-    for (item_id,) in cursor.fetchall():
-        current = request.form.get(f"current_{item_id}", 0)
-        previous = request.form.get(f"previous_{item_id}", 0)
-        cursor.execute(
-            "UPDATE balance_sheet SET current_amount=?, previous_amount=? WHERE id=?",
-            (current, previous, item_id),
-        )
-    conn.commit()
-    conn.close()
+    payload = {}
+    for key, value in request.form.items():
+        if key.startswith("current_"):
+            item_id = key.split("_", 1)[1]
+            payload.setdefault(item_id, {})["current_amount"] = value
+        elif key.startswith("previous_"):
+            item_id = key.split("_", 1)[1]
+            payload.setdefault(item_id, {})["previous_amount"] = value
+
+    try:
+        save_balance_sheet_values("LIABILITIES", payload)
+        flash("Liabilities updated successfully.", "success")
+    except ValueError as exc:
+        flash(str(exc), "danger")
     return redirect("/liabilities")
 
 
 @app.route("/report")
 def report():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM company LIMIT 1")
-    company = cursor.fetchone()
-
-    cursor.execute("SELECT * FROM balance_sheet WHERE section='ASSETS' ORDER BY group_name,note_no")
-    assets = cursor.fetchall()
-
-    cursor.execute("SELECT * FROM balance_sheet WHERE section IN ('EQUITY AND LIABILITIES', 'LIABILITIES') ORDER BY group_name,note_no")
-    liabilities = cursor.fetchall()
-
-    cursor.execute("SELECT SUM(current_amount) FROM balance_sheet WHERE section='ASSETS'")
-    total_assets = cursor.fetchone()[0] or 0
-
-    cursor.execute("SELECT SUM(current_amount) FROM balance_sheet WHERE section IN ('EQUITY AND LIABILITIES', 'LIABILITIES')")
-    total_liabilities = cursor.fetchone()[0] or 0
-
-    conn.close()
+    company = get_company()
+    assets = get_balance_sheet_rows(section="ASSETS")
+    liabilities = get_balance_sheet_rows(section="LIABILITIES")
+    total_assets = get_balance_sheet_totals("ASSETS")["current_amount"]
+    total_liabilities = get_balance_sheet_totals("LIABILITIES")["current_amount"]
 
     return render_template(
         "report.html",
@@ -228,33 +203,78 @@ def export():
     return render_template("export.html")
 
 
+@app.route("/import/csv", methods=["POST"])
+def import_csv():
+    uploaded = request.files.get("csv_file")
+    if not uploaded or not uploaded.filename:
+        flash("Please choose a CSV file to import.", "danger")
+        return redirect("/export")
+
+    try:
+        csv_text = uploaded.read().decode("utf-8")
+        imported_count = import_balance_sheet_from_csv(csv_text)
+        flash(f"Imported {imported_count} balance sheet rows successfully.", "success")
+    except Exception as exc:
+        flash(f"Import failed: {exc}", "danger")
+    return redirect("/export")
+
+
 @app.route("/export/csv")
 def export_csv():
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM company LIMIT 1")
-    company = cursor.fetchone()
-    cursor.execute(
-        "SELECT section, group_name, item_name, note_no, current_amount, previous_amount FROM balance_sheet ORDER BY section, group_name, note_no"
-    )
-    rows = cursor.fetchall()
-    conn.close()
+    company = get_company() or {}
+    rows = get_balance_sheet_rows()
 
     output = StringIO()
     writer = csv.writer(output)
 
-    writer.writerow(["Company Name", company[1] if company else ""])
-    writer.writerow(["Balance Sheet Date", company[2] if company else ""])
-    writer.writerow(["Currency", company[3] if company else ""])
-    writer.writerow(["Current Year", company[4] if company else ""])
-    writer.writerow(["Previous Year", company[5] if company else ""])
+    writer.writerow(["Company Name", company.get("company_name", "")])
+    writer.writerow(["Balance Sheet Date", company.get("balance_sheet_date", "")])
+    writer.writerow(["Currency", company.get("currency", "")])
+    writer.writerow(["Current Year", company.get("current_year", "")])
+    writer.writerow(["Previous Year", company.get("previous_year", "")])
     writer.writerow([])
     writer.writerow(["Section", "Group", "Particular", "Note", "Current Amount", "Previous Amount"])
-    writer.writerows(rows)
+    writer.writerows(
+        [
+            [
+                row["section"],
+                row["group_name"],
+                row["item_name"],
+                row["note_no"],
+                row["current_amount"],
+                row["previous_amount"],
+            ]
+            for row in rows
+        ]
+    )
 
     csv_data = output.getvalue()
     response = Response(csv_data, mimetype="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=balance_sheet_export.csv"
+    return response
+
+
+@app.route("/export/pdf")
+def export_pdf():
+    company = get_company() or {}
+    assets = get_balance_sheet_rows(section="ASSETS")
+    liabilities = get_balance_sheet_rows(section="LIABILITIES")
+
+    body = [
+        f"Balance Sheet Report",
+        f"Company: {company.get('company_name', '')}",
+        f"Date: {company.get('balance_sheet_date', '')}",
+        "",
+        "Assets",
+    ]
+    for row in assets:
+        body.append(f"- {row['item_name']}: {row['current_amount']}")
+    body.extend(["", "Liabilities"])
+    for row in liabilities:
+        body.append(f"- {row['item_name']}: {row['current_amount']}")
+
+    response = Response("\n".join(body), mimetype="application/pdf")
+    response.headers["Content-Disposition"] = "attachment; filename=balance_sheet_export.pdf"
     return response
 
 

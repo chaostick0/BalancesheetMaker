@@ -13,6 +13,12 @@
     </section>
 
     <div class="form-card">
+        {% if not company %}
+        <div class="empty-state mb-4">
+            <h5>No company profile yet</h5>
+            <p class="subtitle mb-0">Fill in your company details to start building a polished balance sheet.</p>
+        </div>
+        {% endif %}
         <form method="POST" action="/save-company">
             <div class="row g-3">
                 <div class="col-md-6 form-group">

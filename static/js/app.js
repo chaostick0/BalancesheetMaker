@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebar");
     const sidebarClose = document.getElementById("sidebarClose");
     const backdrop = document.getElementById("sidebarBackdrop");
+    const themeToggle = document.getElementById("themeToggle");
 
     if (searchBox) {
         searchBox.addEventListener("keyup", function () {
@@ -29,6 +30,19 @@ document.addEventListener("DOMContentLoaded", function () {
     menuToggle?.addEventListener("click", openSidebar);
     sidebarClose?.addEventListener("click", closeSidebar);
     backdrop?.addEventListener("click", closeSidebar);
+
+    const savedTheme = localStorage.getItem("balance-sheet-theme") || "light";
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        themeToggle.textContent = "☀️";
+    }
+
+    themeToggle?.addEventListener("click", function () {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("balance-sheet-theme", isDark ? "dark" : "light");
+        themeToggle.textContent = isDark ? "☀️" : "🌙";
+    });
 
     window.addEventListener("resize", function () {
         if (window.innerWidth > 991) {

@@ -280,8 +280,60 @@ a {
     transform: translateY(-1px);
 }
 
+.theme-toggle {
+    margin-left: auto;
+    border: 0;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background: #e5edff;
+    color: var(--accent);
+}
+
+body.dark-mode {
+    background: linear-gradient(135deg, #020617 0%, #111827 100%);
+    color: #e5eefc;
+}
+
+body.dark-mode .hero-card,
+body.dark-mode .card,
+body.dark-mode .form-card,
+body.dark-mode .table-card,
+body.dark-mode .topbar {
+    background: #111827;
+    color: #e5eefc;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .sidebar {
+    background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+}
+
+body.dark-mode .table thead th,
+body.dark-mode .group-row th {
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+body.dark-mode .form-control {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: #334155;
+}
+
 .alert {
     border-radius: 16px;
+}
+
+.flash-stack {
+    margin-bottom: 16px;
+}
+
+.empty-state {
+    padding: 28px;
+    border-radius: 18px;
+    border: 1px dashed var(--border);
+    background: rgba(255,255,255,0.6);
+    text-align: center;
 }
 
 .action-row {

@@ -12,6 +12,33 @@
         </div>
     </section>
 
+    {% if not assets %}
+    <div class="empty-state mb-4">
+        <h5>No asset rows yet</h5>
+        <p class="subtitle mb-0">The default balance sheet items will appear after the database is initialized.</p>
+    </div>
+    {% endif %}
+
+    <div class="card p-3 mb-4">
+        <form method="POST" action="/add-asset" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Asset Name</label>
+                <input class="form-control" type="text" name="item_name" placeholder="New asset item" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Group</label>
+                <input class="form-control" type="text" name="group_name" placeholder="Custom Group">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Note</label>
+                <input class="form-control" type="text" name="note_no" placeholder="N/A">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100">Add Row</button>
+            </div>
+        </form>
+    </div>
+
     <form method="POST" action="/save-assets">
         <div class="action-row">
             <div class="search-wrap">
@@ -49,6 +76,11 @@
                             </td>
                             <td>
                                 <input type="number" step="0.01" class="form-control" name="previous_{{ row[0] }}" value="{{ row[5] }}">
+                            </td>
+                            <td>
+                                <form method="POST" action="/remove-asset/{{ row[0] }}" class="d-inline">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}

@@ -8,9 +8,18 @@
 </div>
 
 <div class="card p-4 shadow-sm">
-    <p>Use the button below to export your company and balance sheet data for offline review.</p>
-    <a href="/export/csv" class="btn btn-primary">Download CSV</a>
-    <a href="/" class="btn btn-outline-secondary ms-2">Back to Dashboard</a>
+    <p>Use the tools below to import or export your company and balance sheet data for offline review.</p>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <a href="/export/csv" class="btn btn-primary">Download CSV</a>
+        <a href="/export/pdf" class="btn btn-outline-secondary">Download PDF</a>
+        <a href="/" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    <form method="POST" action="/import/csv" enctype="multipart/form-data" class="border rounded p-3">
+        <label class="form-label">Import CSV</label>
+        <input class="form-control" type="file" name="csv_file" accept=".csv" required>
+        <button class="btn btn-primary mt-3">Import Data</button>
+    </form>
 </div>
 
 {% endblock %}

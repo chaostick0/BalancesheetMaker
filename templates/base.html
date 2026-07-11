@@ -35,9 +35,19 @@
                     <p class="eyebrow">Financial workspace</p>
                     <h1 class="topbar-title">Keep your balance sheet elegant and accurate</h1>
                 </div>
+                <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">🌙</button>
             </header>
 
             <main class="content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-stack">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} mb-3">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
                 {% block content %}{% endblock %}
             </main>
         </div>

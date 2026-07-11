@@ -58,5 +58,26 @@
             </div>
         </div>
     </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h6>Current vs Previous Year</h6>
+                    <div class="value">₹ {{ "{:,.2f}".format(assets_current - liabilities_current) }}</div>
+                    <p class="subtitle mt-2">Previous year gap: ₹ {{ "{:,.2f}".format(assets_previous - liabilities_previous) }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h6>Insight</h6>
+                    <div class="value">{{ trend_message }}</div>
+                    <p class="subtitle mt-2">This summary helps you quickly spot whether the balance sheet is moving into a healthier or riskier position.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
