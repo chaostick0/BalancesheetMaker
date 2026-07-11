@@ -1,0 +1,42 @@
+.btn,
+.btn-primary,
+.btn-outline-secondary {
+    transition: all 0.2s ease;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 600;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border: 0;
+    color: white;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 10px 24px rgba(37,99,235,0.18);
+}
+
+.btn-outline-secondary {
+    border: 1px solid var(--border);
+    background: white;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+}
+
+.theme-toggle {
+    margin-left: auto;
+    border: 0;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background: #e5edff;
+    color: var(--accent);
+}

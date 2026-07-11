@@ -1,0 +1,62 @@
+.form-card {
+    padding: 24px;
+    max-width: 900px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: #fbfdff;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.16rem rgba(37, 99, 235, 0.16);
+    outline: none;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon .icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: var(--muted);
+}
+
+.input-with-icon .form-control {
+    padding-left: 42px;
+}
+
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    border-color: var(--success);
+    box-shadow: 0 0 0 0.16rem rgba(47,158,68,0.12);
+}
+
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 0.16rem rgba(220,38,38,0.12);
+}
+
+.required-indicator {
+    color: var(--danger);
+    margin-left: 2px;
+}

@@ -1,0 +1,56 @@
+.table-card {
+    border-radius: 20px;
+    overflow-x: auto;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.table-card .table {
+    min-width: 760px;
+    margin-bottom: 0;
+}
+
+.table {
+    background: var(--surface-strong);
+}
+
+.table thead th {
+    background: #0f172a;
+    color: #fff;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 0;
+}
+
+.table tbody tr:nth-child(even) {
+    background: rgba(248,250,252,0.9);
+}
+
+.table tbody tr:hover {
+    background: rgba(37,99,235,0.08);
+}
+
+.table tbody tr.group-row th {
+    background: #e2e8f0;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.table .currency {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.table-sticky-footer {
+    position: sticky;
+    bottom: 0;
+    background: #f8fbff;
+    z-index: 2;
+}

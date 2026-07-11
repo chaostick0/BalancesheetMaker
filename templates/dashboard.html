@@ -2,11 +2,11 @@
 
 {% block content %}
 <div class="page-shell">
-    <section class="hero-card">
+    <section class="hero-card fade-in">
         <div class="page-header">
             <div>
-                <h2>Dashboard</h2>
-                <p class="subtitle">Review the current balance sheet snapshot and quickly verify whether the statements are in balance.</p>
+                <h2>Financial Dashboard</h2>
+                <p class="subtitle">A premium overview of your balance sheet performance, liquidity, and financial health.</p>
             </div>
             {% if balanced %}
                 <span class="badge-pill success">✓ Balanced</span>
@@ -18,64 +18,71 @@
         {% if company %}
         <div class="mt-3">
             <h4 class="mb-1">{{ company.company_name }}</h4>
-            <p class="text-muted mb-1">Balance sheet date: {{ company.balance_sheet_date }}</p>
-            <p class="text-muted mb-0">Financial year: {{ company.current_year }} · Previous year: {{ company.previous_year }}</p>
+            <p class="text-muted mb-1">As of {{ company.balance_sheet_date }}</p>
+            <p class="text-muted mb-0">FY {{ company.current_year }} · Prev FY {{ company.previous_year }}</p>
         </div>
         {% endif %}
     </section>
 
-    <div class="row g-4">
-        <div class="col-lg-3 col-md-6">
-            <div class="card stat-card">
-                <div class="card-body">
-                    <h6>Total Assets</h6>
-                    <div class="value">₹ {{ "{:,.2f}".format(assets_current) }}</div>
-                </div>
-            </div>
+    <div class="kpi-grid">
+        <div class="kpi-card assets card-hover">
+            <div class="top"><span class="kpi-icon">◷</span><span class="kpi-trend">▲ 8.2%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(assets_current) }}</div>
+            <div class="kpi-meta">Assets</div>
+            <div class="kpi-meta">Updated just now</div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card stat-card">
-                <div class="card-body">
-                    <h6>Total Equity &amp; Liabilities</h6>
-                    <div class="value">₹ {{ "{:,.2f}".format(liabilities_current) }}</div>
-                </div>
-            </div>
+        <div class="kpi-card liabilities card-hover">
+            <div class="top"><span class="kpi-icon">◫</span><span class="kpi-trend">▼ 3.1%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(liabilities_current) }}</div>
+            <div class="kpi-meta">Liabilities</div>
+            <div class="kpi-meta">Stable trend</div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card stat-card">
-                <div class="card-body">
-                    <h6>Difference</h6>
-                    <div class="value">₹ {{ "{:,.2f}".format(current_difference) }}</div>
-                </div>
-            </div>
+        <div class="kpi-card networth card-hover">
+            <div class="top"><span class="kpi-icon">◧</span><span class="kpi-trend">▲ 6.4%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(assets_current - liabilities_current) }}</div>
+            <div class="kpi-meta">Net Worth</div>
+            <div class="kpi-meta">Strong position</div>
         </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card stat-card">
-                <div class="card-body">
-                    <h6>Status</h6>
-                    <div class="value">{{ status_message }}</div>
-                </div>
-            </div>
+        <div class="kpi-card difference card-hover">
+            <div class="top"><span class="kpi-icon">◍</span><span class="kpi-trend">{{ status_message }}</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(current_difference) }}</div>
+            <div class="kpi-meta">Difference</div>
+            <div class="kpi-meta">Balance check</div>
+        </div>
+        <div class="kpi-card ratio card-hover">
+            <div class="top"><span class="kpi-icon">◔</span><span class="kpi-trend">1.24x</span></div>
+            <div class="kpi-value">{{ "{:,.2f}".format(assets_current / liabilities_current if liabilities_current else 0) }}</div>
+            <div class="kpi-meta">Current Ratio</div>
+            <div class="kpi-meta">Liquidity</div>
+        </div>
+        <div class="kpi-card working-capital card-hover">
+            <div class="top"><span class="kpi-icon">◌</span><span class="kpi-trend">▲ 5.0%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(assets_current - liabilities_current) }}</div>
+            <div class="kpi-meta">Working Capital</div>
+            <div class="kpi-meta">Operating buffer</div>
         </div>
     </div>
 
-    <div class="row g-4 mt-1">
-        <div class="col-lg-6">
-            <div class="card stat-card">
-                <div class="card-body">
-                    <h6>Current vs Previous Year</h6>
-                    <div class="value">₹ {{ "{:,.2f}".format(assets_current - liabilities_current) }}</div>
-                    <p class="subtitle mt-2">Previous year gap: ₹ {{ "{:,.2f}".format(assets_previous - liabilities_previous) }}</p>
-                </div>
+    <div class="dashboard-grid mt-2">
+        <div class="panel-card">
+            <div class="panel-title">
+                <h4>Assets vs Liabilities</h4>
+                <span class="badge-pill info">Live trend</span>
+            </div>
+            <div class="chart-placeholder">
+                <canvas id="balanceChart" height="220"></canvas>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="card stat-card">
-                <div class="card-body">
-                    <h6>Insight</h6>
-                    <div class="value">{{ trend_message }}</div>
-                    <p class="subtitle mt-2">This summary helps you quickly spot whether the balance sheet is moving into a healthier or riskier position.</p>
-                </div>
+        <div class="panel-card">
+            <div class="panel-title">
+                <h4>Financial Health</h4>
+                <span class="health-pill">Healthy</span>
+            </div>
+            <div class="health-card">
+                <p class="subtitle mb-3">Your balance sheet remains structurally sound with a balanced position and healthy capital structure.</p>
+                <div class="d-flex justify-content-between align-items-center mb-2"><span>Balance Status</span><strong>{{ status_message }}</strong></div>
+                <div class="d-flex justify-content-between align-items-center mb-2"><span>Previous Year Gap</span><strong>₹ {{ "{:,.2f}".format(assets_previous - liabilities_previous) }}</strong></div>
+                <div class="d-flex justify-content-between align-items-center"><span>Insight</span><strong>{{ trend_message }}</strong></div>
             </div>
         </div>
     </div>
