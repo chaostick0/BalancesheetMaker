@@ -8,6 +8,11 @@ app = Flask(__name__)
 
 initialize_database()
 
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+
 @app.route("/")
 def dashboard():
     conn = sqlite3.connect("database.db")
