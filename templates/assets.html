@@ -2,27 +2,35 @@
 
 {% block content %}
 <div class="page-shell">
-    <section class="hero-card">
+    <section class="hero-card fade-in">
         <div class="page-header">
             <div>
                 <h2>Assets</h2>
-                <p class="subtitle">Update the asset balances for the current and previous year.</p>
+                <p class="subtitle">Manage the balance sheet’s asset structure with a refined, high-clarity workspace.</p>
             </div>
             <span class="badge-pill info">Editable</span>
         </div>
     </section>
 
+    <div class="row g-4">
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Total Assets</div><div class="value">₹ {{ "{:,.2f}".format(assets|sum(attribute='current_amount') if assets else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Largest Group</div><div class="value">{{ assets[0].group_name if assets else '—' }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Current Year Total</div><div class="value">₹ {{ "{:,.2f}".format(assets|sum(attribute='current_amount') if assets else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Previous Year Total</div><div class="value">₹ {{ "{:,.2f}".format(assets|sum(attribute='previous_amount') if assets else 0) }}</div></div></div>
+    </div>
+
     {% if not assets %}
     <div class="empty-state mb-4">
         <h5>No asset rows yet</h5>
-        <p class="subtitle mb-0">The default balance sheet items will appear after the database is initialized.</p>
+        <p class="subtitle mb-0">Start by adding your first asset item below.</p>
+        <a class="btn btn-primary mt-3" href="#asset-form">Add Asset</a>
     </div>
     {% endif %}
 
-    <div class="card p-3 mb-4">
+    <div class="card p-3 mb-4" id="asset-form">
         <form method="POST" action="/add-asset" class="row g-2 align-items-end">
             <div class="col-md-4">
-                <label class="form-label">Asset Name</label>
+                <label class="form-label">Asset Name <span class="required-indicator">*</span></label>
                 <input class="form-control" type="text" name="item_name" placeholder="New asset item" required>
             </div>
             <div class="col-md-3">
@@ -41,7 +49,8 @@
 
     <form method="POST" action="/save-assets">
         <div class="action-row">
-            <div class="search-wrap">
+            <div class="search-wrap input-with-icon">
+                <span class="icon">⌕</span>
                 <input type="text" id="searchBox" class="form-control" placeholder="Search assets...">
             </div>
             <button class="btn btn-primary">Save All Changes</button>
@@ -54,8 +63,8 @@
                         <th>Group</th>
                         <th>Particular</th>
                         <th>Note</th>
-                        <th>Current Year</th>
-                        <th>Previous Year</th>
+                        <th class="currency">Current Year</th>
+                        <th class="currency">Previous Year</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -72,12 +81,8 @@
                             <td>{{ row.group_name }}</td>
                             <td>{{ row.item_name }}</td>
                             <td>{{ row.note_no }}</td>
-                            <td>
-                                <input type="number" step="0.01" class="form-control" name="current_{{ row.id }}" value="{{ row.current_amount }}">
-                            </td>
-                            <td>
-                                <input type="number" step="0.01" class="form-control" name="previous_{{ row.id }}" value="{{ row.previous_amount }}">
-                            </td>
+                            <td class="currency"><input type="number" step="0.01" class="form-control" name="current_{{ row.id }}" value="{{ row.current_amount }}"></td>
+                            <td class="currency"><input type="number" step="0.01" class="form-control" name="previous_{{ row.id }}" value="{{ row.previous_amount }}"></td>
                             <td>
                                 <form method="POST" action="/remove-asset/{{ row.id }}" class="d-inline">
                                     <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>

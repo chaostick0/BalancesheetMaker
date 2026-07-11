@@ -185,6 +185,39 @@ def get_balance_sheet_totals(section, db_path=None):
         }
 
 
+def get_dashboard_summary(db_path=None):
+    assets_totals = get_balance_sheet_totals("ASSETS", db_path=db_path)
+    liabilities_totals = get_balance_sheet_totals("LIABILITIES", db_path=db_path)
+
+    assets_current = assets_totals["current_amount"]
+    assets_previous = assets_totals["previous_amount"]
+    liabilities_current = liabilities_totals["current_amount"]
+    liabilities_previous = liabilities_totals["previous_amount"]
+
+    current_difference = round_amount(assets_current - liabilities_current)
+    previous_difference = round_amount(assets_previous - liabilities_previous)
+    balanced = abs(current_difference) < 0.01 and abs(previous_difference) < 0.01
+
+    current_ratio = round_amount(assets_current / liabilities_current) if liabilities_current else 0.0
+    balance_status = "Balanced" if balanced else "Needs review"
+    trend_message = "Improving" if current_difference <= 0 else "Needs review"
+    if not balanced:
+        trend_message = "Drifting" if abs(current_difference) > 10000 else "Needs review"
+
+    return {
+        "assets_current": assets_current,
+        "assets_previous": assets_previous,
+        "liabilities_current": liabilities_current,
+        "liabilities_previous": liabilities_previous,
+        "current_difference": current_difference,
+        "previous_difference": previous_difference,
+        "balanced": balanced,
+        "balance_status": balance_status,
+        "current_ratio": current_ratio,
+        "trend_message": trend_message,
+    }
+
+
 def save_balance_sheet_values(section, payload, db_path=None):
     with get_connection(db_path) as conn:
         for item_id, values in payload.items():
@@ -249,12 +282,20 @@ def import_balance_sheet_from_csv(csv_text, db_path=None):
     rows = []
     reader = csv.DictReader(StringIO(csv_text))
     for row in reader:
+        if not row:
+            continue
+        section = (row.get("section") or "").strip()
+        group_name = (row.get("group_name") or "").strip()
+        item_name = (row.get("item_name") or "").strip()
+        note_no = (row.get("note_no") or "").strip()
+        if not section or not item_name:
+            continue
         rows.append(
             (
-                row.get("section", "").strip(),
-                row.get("group_name", "").strip(),
-                row.get("item_name", "").strip(),
-                row.get("note_no", "").strip(),
+                section,
+                group_name,
+                item_name,
+                note_no,
                 round_amount(row.get("current_amount", 0) or 0),
                 round_amount(row.get("previous_amount", 0) or 0),
             )

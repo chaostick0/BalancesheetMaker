@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="page-shell">
-    <section class="hero-card text-center">
+    <section class="hero-card text-center fade-in">
         <h2>{{ company.company_name if company else "Company Name" }}</h2>
         <p class="subtitle mt-2">Balance Sheet · As on {{ company.balance_sheet_date if company else "" }}</p>
     </section>
@@ -12,25 +12,14 @@
             <div class="table-card">
                 <table class="table table-hover align-middle">
                     <thead>
-                        <tr>
-                            <th colspan="2">Assets</th>
-                        </tr>
-                        <tr>
-                            <th>Particulars</th>
-                            <th class="text-end">Amount</th>
-                        </tr>
+                        <tr><th colspan="2">Assets</th></tr>
+                        <tr><th>Particulars</th><th class="currency">Amount</th></tr>
                     </thead>
                     <tbody>
                         {% for item in assets %}
-                        <tr>
-                            <td>{{ item.item_name }}</td>
-                            <td class="text-end">₹ {{ "{:,.2f}".format(item.current_amount) }}</td>
-                        </tr>
+                        <tr><td>{{ item.item_name }}</td><td class="currency">₹ {{ "{:,.2f}".format(item.current_amount) }}</td></tr>
                         {% endfor %}
-                        <tr class="group-row">
-                            <th>Total Assets</th>
-                            <th class="text-end">₹ {{ "{:,.2f}".format(total_assets) }}</th>
-                        </tr>
+                        <tr class="group-row"><th>Total Assets</th><th class="currency">₹ {{ "{:,.2f}".format(total_assets) }}</th></tr>
                     </tbody>
                 </table>
             </div>
@@ -40,25 +29,14 @@
             <div class="table-card">
                 <table class="table table-hover align-middle">
                     <thead>
-                        <tr>
-                            <th colspan="2">Equity &amp; Liabilities</th>
-                        </tr>
-                        <tr>
-                            <th>Particulars</th>
-                            <th class="text-end">Amount</th>
-                        </tr>
+                        <tr><th colspan="2">Equity &amp; Liabilities</th></tr>
+                        <tr><th>Particulars</th><th class="currency">Amount</th></tr>
                     </thead>
                     <tbody>
                         {% for item in liabilities %}
-                        <tr>
-                            <td>{{ item.item_name }}</td>
-                            <td class="text-end">₹ {{ "{:,.2f}".format(item.current_amount) }}</td>
-                        </tr>
+                        <tr><td>{{ item.item_name }}</td><td class="currency">₹ {{ "{:,.2f}".format(item.current_amount) }}</td></tr>
                         {% endfor %}
-                        <tr class="group-row">
-                            <th>Total Equity &amp; Liabilities</th>
-                            <th class="text-end">₹ {{ "{:,.2f}".format(total_liabilities) }}</th>
-                        </tr>
+                        <tr class="group-row"><th>Total Equity &amp; Liabilities</th><th class="currency">₹ {{ "{:,.2f}".format(total_liabilities) }}</th></tr>
                     </tbody>
                 </table>
             </div>

@@ -37,6 +37,14 @@ class TemplateRenderingTests(unittest.TestCase):
         self.assertIn(b"Demo Ltd", response.data)
         self.assertIn(b"Balance Sheet", response.data)
 
+    def test_pdf_export_returns_pdf_content(self):
+        client = flask_app.app.test_client()
+        response = client.get("/export/pdf")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "application/pdf")
+        self.assertIn(b"%PDF", response.data)
+        self.assertIn(b"Balance Sheet Report", response.data)
+
 
 if __name__ == "__main__":
     unittest.main()

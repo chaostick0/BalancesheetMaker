@@ -50,8 +50,8 @@
             <div class="kpi-meta">Balance check</div>
         </div>
         <div class="kpi-card ratio card-hover">
-            <div class="top"><span class="kpi-icon">◔</span><span class="kpi-trend">1.24x</span></div>
-            <div class="kpi-value">{{ "{:,.2f}".format(assets_current / liabilities_current if liabilities_current else 0) }}</div>
+            <div class="top"><span class="kpi-icon">◔</span><span class="kpi-trend">{{ "{:,.2f}".format(current_ratio) }}x</span></div>
+            <div class="kpi-value">{{ "{:,.2f}".format(current_ratio) }}</div>
             <div class="kpi-meta">Current Ratio</div>
             <div class="kpi-meta">Liquidity</div>
         </div>

@@ -5,6 +5,7 @@ import unittest
 
 from database import (
     delete_balance_sheet_row,
+    get_dashboard_summary,
     import_balance_sheet_from_csv,
     insert_balance_sheet_row,
     normalize_amount,
@@ -153,6 +154,46 @@ class DatabaseHelpersTests(unittest.TestCase):
             count = cursor.fetchone()[0]
             conn.close()
             self.assertEqual(count, 0)
+        finally:
+            os.remove(db_path)
+
+    def test_dashboard_summary_returns_balanced_metrics(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
+            db_path = tmp.name
+
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                CREATE TABLE balance_sheet (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    section TEXT,
+                    group_name TEXT,
+                    item_name TEXT,
+                    note_no TEXT,
+                    current_amount REAL DEFAULT 0,
+                    previous_amount REAL DEFAULT 0
+                )
+                """
+            )
+            cursor.execute(
+                "INSERT INTO balance_sheet (section, group_name, item_name, note_no, current_amount, previous_amount) VALUES (?,?,?,?,?,?)",
+                ("ASSETS", "Current Assets", "Cash", "1", 150, 130),
+            )
+            cursor.execute(
+                "INSERT INTO balance_sheet (section, group_name, item_name, note_no, current_amount, previous_amount) VALUES (?,?,?,?,?,?)",
+                ("LIABILITIES", "Current Liabilities", "Payables", "2", 150, 130),
+            )
+            conn.commit()
+            conn.close()
+
+            summary = get_dashboard_summary(db_path=db_path)
+            self.assertAlmostEqual(summary["assets_current"], 150.0)
+            self.assertAlmostEqual(summary["liabilities_current"], 150.0)
+            self.assertAlmostEqual(summary["current_difference"], 0.0)
+            self.assertEqual(summary["balance_status"], "Balanced")
+            self.assertAlmostEqual(summary["current_ratio"], 1.0)
         finally:
             os.remove(db_path)
 

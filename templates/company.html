@@ -2,48 +2,66 @@
 
 {% block content %}
 <div class="page-shell">
-    <section class="hero-card">
+    <section class="hero-card fade-in">
         <div class="page-header">
             <div>
-                <h2>Company Details</h2>
-                <p class="subtitle">Capture the business profile and financial period so your reports stay consistent.</p>
+                <h2>Company Profile</h2>
+                <p class="subtitle">Set the core business context so every report feels consistent and professional.</p>
             </div>
             <span class="badge-pill info">Setup</span>
         </div>
     </section>
 
-    <div class="form-card">
-        {% if not company %}
-        <div class="empty-state mb-4">
-            <h5>No company profile yet</h5>
-            <p class="subtitle mb-0">Fill in your company details to start building a polished balance sheet.</p>
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="form-card">
+                {% if not company %}
+                <div class="empty-state mb-4">
+                    <h5>No company profile yet</h5>
+                    <p class="subtitle mb-0">Complete the profile to unlock polished reports and a consistent financial workspace.</p>
+                </div>
+                {% endif %}
+                <form method="POST" action="/save-company">
+                    <div class="row g-3">
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Company Name <span class="required-indicator">*</span></label>
+                            <input class="form-control" type="text" name="company_name" value="{{ company.company_name if company else '' }}" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Balance Sheet Date <span class="required-indicator">*</span></label>
+                            <input class="form-control" type="date" name="balance_sheet_date" value="{{ company.balance_sheet_date if company else '' }}" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Currency <span class="required-indicator">*</span></label>
+                            <input class="form-control" name="currency" value="{{ company.currency if company else '₹' }}" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Current Year <span class="required-indicator">*</span></label>
+                            <input class="form-control" name="current_year" value="{{ company.current_year if company else '' }}" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Previous Year <span class="required-indicator">*</span></label>
+                            <input class="form-control" name="previous_year" value="{{ company.previous_year if company else '' }}" required>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mt-3">Save Details</button>
+                </form>
+            </div>
         </div>
-        {% endif %}
-        <form method="POST" action="/save-company">
-            <div class="row g-3">
-                <div class="col-md-6 form-group">
-                    <label class="form-label">Company Name</label>
-                    <input class="form-control" type="text" name="company_name" value="{{ company.company_name if company else '' }}" required>
-                </div>
-                <div class="col-md-6 form-group">
-                    <label class="form-label">Balance Sheet Date</label>
-                    <input class="form-control" type="date" name="balance_sheet_date" value="{{ company.balance_sheet_date if company else '' }}" required>
-                </div>
-                <div class="col-md-6 form-group">
-                    <label class="form-label">Currency</label>
-                    <input class="form-control" name="currency" value="{{ company.currency if company else '₹' }}" required>
-                </div>
-                <div class="col-md-6 form-group">
-                    <label class="form-label">Current Year</label>
-                    <input class="form-control" name="current_year" value="{{ company.current_year if company else '' }}" required>
-                </div>
-                <div class="col-md-6 form-group">
-                    <label class="form-label">Previous Year</label>
-                    <input class="form-control" name="previous_year" value="{{ company.previous_year if company else '' }}" required>
+        <div class="col-lg-4">
+            <div class="panel-card">
+                <div class="panel-title"><h4>Live Preview</h4><span class="badge-pill info">Preview</span></div>
+                <div class="health-card">
+                    <div class="text-center mb-3">
+                        <div class="kpi-icon mx-auto mb-2">🏢</div>
+                        <h5>{{ company.company_name if company else 'Your Company' }}</h5>
+                        <p class="subtitle mb-0">{{ company.balance_sheet_date if company else 'Balance sheet date' }}</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2"><span>Current FY</span><strong>{{ company.current_year if company else '—' }}</strong></div>
+                    <div class="d-flex justify-content-between align-items-center"><span>Previous FY</span><strong>{{ company.previous_year if company else '—' }}</strong></div>
                 </div>
             </div>
-            <button class="btn btn-primary mt-3">Save Details</button>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

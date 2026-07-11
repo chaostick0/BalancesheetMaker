@@ -1,12 +1,13 @@
 import csv
 import sqlite3
-from io import StringIO
+from io import BytesIO, StringIO
 from flask import Flask, Response, redirect, render_template, request, flash
 from database import (
     delete_balance_sheet_row,
     get_balance_sheet_rows,
     get_balance_sheet_totals,
     get_company,
+    get_dashboard_summary,
     import_balance_sheet_from_csv,
     initialize_database,
     insert_balance_sheet_row,
@@ -29,35 +30,21 @@ if __name__ == "__main__":
 @app.route("/")
 def dashboard():
     company = get_company()
-    assets_totals = get_balance_sheet_totals("ASSETS")
-    liabilities_totals = get_balance_sheet_totals("LIABILITIES")
-
-    assets_current = assets_totals["current_amount"]
-    assets_previous = assets_totals["previous_amount"]
-    liabilities_current = liabilities_totals["current_amount"]
-    liabilities_previous = liabilities_totals["previous_amount"]
-
-    current_difference = round_amount(assets_current - liabilities_current)
-    previous_difference = round_amount(assets_previous - liabilities_previous)
-    balanced = abs(current_difference) < 0.01 and abs(previous_difference) < 0.01
-    status_message = "Balanced" if balanced else f"Difference: ₹ {current_difference:,.2f}"
-
-    trend_message = "Improving" if current_difference <= 0 else "Needs review"
-    if not balanced:
-        trend_message = "Drifting" if abs(current_difference) > 10000 else "Needs review"
+    summary = get_dashboard_summary()
 
     return render_template(
         "dashboard.html",
         company=company,
-        assets_current=assets_current,
-        assets_previous=assets_previous,
-        liabilities_current=liabilities_current,
-        liabilities_previous=liabilities_previous,
-        current_difference=current_difference,
-        previous_difference=previous_difference,
-        balanced=balanced,
-        status_message=status_message,
-        trend_message=trend_message,
+        assets_current=summary["assets_current"],
+        assets_previous=summary["assets_previous"],
+        liabilities_current=summary["liabilities_current"],
+        liabilities_previous=summary["liabilities_previous"],
+        current_difference=summary["current_difference"],
+        previous_difference=summary["previous_difference"],
+        balanced=summary["balanced"],
+        status_message=summary["balance_status"],
+        trend_message=summary["trend_message"],
+        current_ratio=summary["current_ratio"],
     )
 
 
@@ -260,20 +247,51 @@ def export_pdf():
     assets = get_balance_sheet_rows(section="ASSETS")
     liabilities = get_balance_sheet_rows(section="LIABILITIES")
 
-    body = [
-        f"Balance Sheet Report",
+    content_lines = [
+        "Balance Sheet Report",
         f"Company: {company.get('company_name', '')}",
         f"Date: {company.get('balance_sheet_date', '')}",
         "",
         "Assets",
+        *[f"- {row['item_name']}: {row['current_amount']}" for row in assets],
+        "",
+        "Liabilities",
+        *[f"- {row['item_name']}: {row['current_amount']}" for row in liabilities],
     ]
-    for row in assets:
-        body.append(f"- {row['item_name']}: {row['current_amount']}")
-    body.extend(["", "Liabilities"])
-    for row in liabilities:
-        body.append(f"- {row['item_name']}: {row['current_amount']}")
 
-    response = Response("\n".join(body), mimetype="application/pdf")
+    def escape_pdf_text(text):
+        return text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+    stream_lines = []
+    for index, line in enumerate(content_lines):
+        y_position = 760 - (index * 14)
+        escaped_line = escape_pdf_text(line)
+        stream_lines.append(f"BT /F1 12 Tf 72 {y_position} Td ({escaped_line}) Tj ET")
+
+    stream_content = "\n".join(stream_lines)
+    stream_bytes = stream_content.encode("latin-1", "replace")
+
+    objects = [
+        "<< /Type /Catalog /Pages 2 0 R >>",
+        "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
+        f"<< /Length {len(stream_bytes)} >>\nstream\n{stream_content}\nendstream",
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    ]
+
+    pdf_parts = [b"%PDF-1.4\n"]
+    offsets = []
+    for index, body in enumerate(objects, start=1):
+        offsets.append(len(b"".join(pdf_parts)))
+        pdf_parts.append(f"{index} 0 obj\n{body}\nendobj\n".encode("latin-1", "replace"))
+
+    xref_offset = len(b"".join(pdf_parts))
+    pdf_parts.append(f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n".encode("latin-1"))
+    for offset in offsets:
+        pdf_parts.append(f"{offset:010d} 00000 n \n".encode("latin-1"))
+    pdf_parts.append(f"trailer<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_offset}\n%%EOF\n".encode("latin-1"))
+
+    response = Response(b"".join(pdf_parts), mimetype="application/pdf")
     response.headers["Content-Disposition"] = "attachment; filename=balance_sheet_export.pdf"
     return response
 
