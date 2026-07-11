@@ -1,54 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div class="page-header mb-4">
-    <h2>Equity & Liabilities</h2>
-    <p class="subtitle">Update liability and shareholder funds values for the current and previous year.</p>
-</div>
-
-<form method="POST" action="/save-liabilities">
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <input type="text" id="searchBox" class="form-control" placeholder="Search liabilities...">
+<div class="page-shell">
+    <section class="hero-card">
+        <div class="page-header">
+            <div>
+                <h2>Equity &amp; Liabilities</h2>
+                <p class="subtitle">Update liability and shareholder funds values for the current and previous year.</p>
+            </div>
+            <span class="badge-pill info">Editable</span>
         </div>
-    </div>
+    </section>
 
-    <table class="table table-bordered table-hover align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Group</th>
-                <th>Particular</th>
-                <th>Note</th>
-                <th>Current Year</th>
-                <th>Previous Year</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% set current_group = "" %}
-            {% for row in liabilities %}
-                {% if current_group != row[2] %}
-                    {% set current_group = row[2] %}
-                    <tr class="table-secondary">
-                        <th colspan="5">{{ current_group }}</th>
+    <form method="POST" action="/save-liabilities">
+        <div class="action-row">
+            <div class="search-wrap">
+                <input type="text" id="searchBox" class="form-control" placeholder="Search liabilities...">
+            </div>
+            <button class="btn btn-primary">Save All Changes</button>
+        </div>
+
+        <div class="table-card">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Group</th>
+                        <th>Particular</th>
+                        <th>Note</th>
+                        <th>Current Year</th>
+                        <th>Previous Year</th>
                     </tr>
-                {% endif %}
-                <tr>
-                    <td>{{ row[2] }}</td>
-                    <td>{{ row[3] }}</td>
-                    <td>{{ row[4] }}</td>
-                    <td>
-                        <input type="number" step="0.01" class="form-control" name="current_{{ row[0] }}" value="{{ row[5] }}">
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" class="form-control" name="previous_{{ row[0] }}" value="{{ row[6] }}">
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <button class="btn btn-primary mt-3">Save All Changes</button>
-</form>
-
+                </thead>
+                <tbody>
+                    {% set current_group = "" %}
+                    {% for row in liabilities %}
+                        {% if current_group != row[2] %}
+                            {% set current_group = row[2] %}
+                            <tr class="group-row">
+                                <th colspan="5">{{ current_group }}</th>
+                            </tr>
+                        {% endif %}
+                        <tr class="data-row">
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[3] }}</td>
+                            <td>{{ row[4] }}</td>
+                            <td>
+                                <input type="number" step="0.01" class="form-control" name="current_{{ row[0] }}" value="{{ row[5] }}">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" class="form-control" name="previous_{{ row[0] }}" value="{{ row[6] }}">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
 {% endblock %}

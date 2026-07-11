@@ -1,58 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Balance Sheet Maker</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
-
 <body>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <p class="eyebrow">Financial Studio</p>
+                    <h3 class="logo">Balance Sheet</h3>
+                </div>
+                <button class="sidebar-close d-lg-none" id="sidebarClose" type="button" aria-label="Close navigation">×</button>
+            </div>
 
-<div class="d-flex">
+            <nav class="sidebar-nav">
+                <a href="/" class="{% if request.path == '/' %}active{% endif %}">🏠 Dashboard</a>
+                <a href="/company" class="{% if request.path == '/company' %}active{% endif %}">🏢 Company Details</a>
+                <a href="/liabilities" class="{% if request.path == '/liabilities' %}active{% endif %}">📋 Equity &amp; Liabilities</a>
+                <a href="/assets" class="{% if request.path == '/assets' %}active{% endif %}">💰 Assets</a>
+                <a href="/report" class="{% if request.path == '/report' %}active{% endif %}">📄 Final Report</a>
+                <a href="/export" class="{% if request.path.startswith('/export') %}active{% endif %}">⬇ Export</a>
+            </nav>
+        </aside>
 
-    <!-- Sidebar -->
+        <div class="content-area">
+            <header class="topbar">
+                <button class="menu-toggle d-lg-none" id="menuToggle" type="button" aria-label="Open navigation">☰</button>
+                <div>
+                    <p class="eyebrow">Financial workspace</p>
+                    <h1 class="topbar-title">Keep your balance sheet elegant and accurate</h1>
+                </div>
+            </header>
 
-    <div class="sidebar">
-
-        <h3 class="logo">
-            Balance Sheet
-        </h3>
-
-<a href="/" class="{% if request.path == '/' %}active{% endif %}">🏠 Dashboard</a>
-
-    <a href="/company" class="{% if request.path == '/company' %}active{% endif %}">🏢 Company Details</a>
-
-    <a href="/liabilities" class="{% if request.path == '/liabilities' %}active{% endif %}">📋 Equity & Liabilities</a>
-
-    <a href="/assets" class="{% if request.path == '/assets' %}active{% endif %}">💰 Assets</a>
-
-    <a href="/report" class="{% if request.path == '/report' %}active{% endif %}">📄 Final Report</a>
-
-    <a href="/export" class="{% if request.path.startswith('/export') %}active{% endif %}">⬇ Export</a>
-
+            <main class="content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
     </div>
 
-    <!-- Main Content -->
-
-    <div class="content">
-
-        {% block content %}
-
-        {% endblock %}
-
-    </div>
-
-</div>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
-
 </html>
