@@ -3,8 +3,8 @@
 {% block content %}
 <div class="page-shell">
     <section class="hero-card text-center">
-        <h2>{{ company[1] if company else "Company Name" }}</h2>
-        <p class="subtitle mt-2">Balance Sheet · As on {{ company[2] if company else "" }}</p>
+        <h2>{{ company.company_name if company else "Company Name" }}</h2>
+        <p class="subtitle mt-2">Balance Sheet · As on {{ company.balance_sheet_date if company else "" }}</p>
     </section>
 
     <div class="row g-4">
@@ -23,8 +23,8 @@
                     <tbody>
                         {% for item in assets %}
                         <tr>
-                            <td>{{ item[3] }}</td>
-                            <td class="text-end">₹ {{ "{:,.2f}".format(item[5]) }}</td>
+                            <td>{{ item.item_name }}</td>
+                            <td class="text-end">₹ {{ "{:,.2f}".format(item.current_amount) }}</td>
                         </tr>
                         {% endfor %}
                         <tr class="group-row">
@@ -51,8 +51,8 @@
                     <tbody>
                         {% for item in liabilities %}
                         <tr>
-                            <td>{{ item[3] }}</td>
-                            <td class="text-end">₹ {{ "{:,.2f}".format(item[5]) }}</td>
+                            <td>{{ item.item_name }}</td>
+                            <td class="text-end">₹ {{ "{:,.2f}".format(item.current_amount) }}</td>
                         </tr>
                         {% endfor %}
                         <tr class="group-row">

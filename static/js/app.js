@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const rows = document.querySelectorAll("tbody tr");
 
             rows.forEach(function (row) {
-                row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(value) ? "" : "none";
             });
         });
     }
@@ -20,11 +21,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function closeSidebar() {
         sidebar?.classList.remove("open");
         backdrop?.classList.remove("show");
+        document.body.classList.remove("sidebar-open");
     }
 
     function openSidebar() {
         sidebar?.classList.add("open");
         backdrop?.classList.add("show");
+        document.body.classList.add("sidebar-open");
     }
 
     menuToggle?.addEventListener("click", openSidebar);
@@ -34,7 +37,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedTheme = localStorage.getItem("balance-sheet-theme") || "light";
     if (savedTheme === "dark") {
         document.body.classList.add("dark-mode");
-        themeToggle.textContent = "☀️";
+        if (themeToggle) {
+            themeToggle.textContent = "☀️";
+        }
     }
 
     themeToggle?.addEventListener("click", function () {
@@ -48,5 +53,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (window.innerWidth > 991) {
             closeSidebar();
         }
+    });
+
+    document.querySelectorAll(".flash-toast").forEach(function (toast, index) {
+        setTimeout(function () {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(-8px)";
+            setTimeout(function () {
+                toast.remove();
+            }, 250);
+        }, 3200 + index * 200);
     });
 });

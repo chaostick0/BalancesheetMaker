@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
     <title>Balance Sheet Maker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -14,6 +15,7 @@
                 <div>
                     <p class="eyebrow">Financial Studio</p>
                     <h3 class="logo">Balance Sheet</h3>
+                    <p class="sidebar-subtitle">Clean, accurate reporting</p>
                 </div>
                 <button class="sidebar-close d-lg-none" id="sidebarClose" type="button" aria-label="Close navigation">×</button>
             </div>
@@ -26,14 +28,19 @@
                 <a href="/report" class="{% if request.path == '/report' %}active{% endif %}">📄 Final Report</a>
                 <a href="/export" class="{% if request.path.startswith('/export') %}active{% endif %}">⬇ Export</a>
             </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-pill">Live insights</div>
+                <p>Built for fast, reliable financial review.</p>
+            </div>
         </aside>
 
         <div class="content-area">
             <header class="topbar">
                 <button class="menu-toggle d-lg-none" id="menuToggle" type="button" aria-label="Open navigation">☰</button>
-                <div>
+                <div class="topbar-copy">
                     <p class="eyebrow">Financial workspace</p>
-                    <h1 class="topbar-title">Keep your balance sheet elegant and accurate</h1>
+                    <h1 class="topbar-title">Professional balance sheet planning for modern teams</h1>
                 </div>
                 <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">🌙</button>
             </header>
@@ -41,15 +48,27 @@
             <main class="content">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
-                        <div class="flash-stack">
+                        <div class="toast-stack" aria-live="polite" aria-atomic="true">
                             {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} mb-3">{{ message }}</div>
+                                <div class="toast-card toast-{{ category }} flash-toast" role="status">
+                                    <div class="toast-icon">
+                                        {% if category == 'success' %}✓{% elif category == 'danger' %}⚠{% else %}ℹ{% endif %}
+                                    </div>
+                                    <div class="toast-body">
+                                        <strong>{{ category|title }}</strong>
+                                        <p>{{ message }}</p>
+                                    </div>
+                                </div>
                             {% endfor %}
                         </div>
                     {% endif %}
                 {% endwith %}
                 {% block content %}{% endblock %}
             </main>
+
+            <footer class="app-footer">
+                <span>© Prantik · July 2026</span>
+            </footer>
         </div>
     </div>
 
