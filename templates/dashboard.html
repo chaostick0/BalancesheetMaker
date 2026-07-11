@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h2>Dashboard</h2>
+
+        {% if company %}
+
+            <h4>{{ company[1] }}</h4>
+
+            <p class="text-muted">
+                Balance Sheet Date : {{ company[2] }}
+            </p>
+
+            <p class="text-muted">
+                Financial Year :
+                {{ company[4] }}
+                |
+                Previous :
+                {{ company[5] }}
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h6>Total Assets</h6>
+
+                    <h3>
+
+                        ₹ {{ "{:,.2f}".format(assets_current) }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h6>Total Equity & Liabilities</h6>
+
+                    <h3>
+
+                        ₹ {{ "{:,.2f}".format(liabilities_current) }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h6>Difference</h6>
+
+                    <h3>
+
+                        ₹ {{ "{:,.2f}".format(current_difference) }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h6>Status</h6>
+
+                    {% if balanced %}
+                    <span class="badge bg-success fs-6">
+                            {{ status_message }}
+                            </span>
+                            {% else %}
+                            <span class="badge bg-danger fs-6">
+                                    {{ status_message }}
+                                    </span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

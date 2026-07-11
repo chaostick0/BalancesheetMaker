@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Company Details</h2>
+
+<p class="subtitle">
+    Enter company information.
+</p>
+
+<form method="POST" action="/save-company">
+
+    <div class="form-group">
+
+        <label>Company Name</label>
+
+        <input
+        class="form-control"
+        type="text"
+        name="company_name"
+        value="{{ company[1] if company else '' }}">
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Balance Sheet Date</label>
+
+        <input
+        class="form-control"
+        type="date"
+        name="balance_sheet_date"
+        value="{{ company[2] if company else '' }}">
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Currency</label>
+
+        <input
+        class="form-control"
+        name="currency"
+        value="{{ company[3] if company else '₹' }}">
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Current Year</label>
+
+        <input
+        class="form-control"
+        name="current_year"
+        value="{{ company[4] if company else '' }}">
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Previous Year</label>
+
+        <input
+        class="form-control"
+        name="previous_year"
+        value="{{ company[5] if company else '' }}">
+
+    </div>
+
+    <button class="btn btn-primary">
+        Save Details
+    </button>
+
+</form>
+
+{% endblock %}

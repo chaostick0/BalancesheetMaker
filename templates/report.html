@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="text-center mb-4">
+
+        <h2>{{ company[1] if company else "Company Name" }}</h2>
+
+        <h5>Balance Sheet</h5>
+
+        <p>As on {{ company[2] if company else "" }}</p>
+
+    </div>
+
+    <div class="row">
+
+        <!-- Assets -->
+        <div class="col-md-6">
+
+            <table class="table table-bordered">
+
+                <thead class="table-primary">
+
+                    <tr>
+                        <th colspan="2">Assets</th>
+                    </tr>
+
+                    <tr>
+                        <th>Particulars</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for item in assets %}
+
+                    <tr>
+
+                        <td>{{ item[3] }}</td>
+
+                        <td class="text-end">
+                            ₹ {{ "{:,.2f}".format(item[5]) }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                <tr class="table-success">
+
+                    <th>Total Assets</th>
+
+                    <th class="text-end">
+                        ₹ {{ "{:,.2f}".format(total_assets) }}
+                    </th>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- Liabilities -->
+
+        <div class="col-md-6">
+
+            <table class="table table-bordered">
+
+                <thead class="table-warning">
+
+                    <tr>
+                        <th colspan="2">Equity & Liabilities</th>
+                    </tr>
+
+                    <tr>
+                        <th>Particulars</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for item in liabilities %}
+
+                    <tr>
+
+                        <td>{{ item[3] }}</td>
+
+                        <td class="text-end">
+                            ₹ {{ "{:,.2f}".format(item[5]) }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                <tr class="table-success">
+
+                    <th>Total Equity & Liabilities</th>
+
+                    <th class="text-end">
+                        ₹ {{ "{:,.2f}".format(total_liabilities) }}
+                    </th>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+
+        {% if total_assets == total_liabilities %}
+
+            <div class="alert alert-success">
+                <strong>✔ Balance Sheet is Balanced</strong>
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-danger">
+                <strong>✖ Balance Sheet is Not Balanced</strong>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
