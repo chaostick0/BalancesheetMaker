@@ -27,5 +27,5 @@
     border: 1px dashed var(--border);
     border-radius: 18px;
     padding: 18px;
-    background: rgba(37,99,235,0.04);
+    background: var(--accent-soft);
 }

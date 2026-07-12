@@ -16,6 +16,22 @@
     --warning: #f59f00;
     --danger: #dc2626;
     --slate: #475569;
+    --icon-color: #0f172a;
+    --icon-muted: #64748b;
+    --dropdown-bg: #ffffff;
+    --dropdown-text: #0f172a;
+    --dropdown-hover: rgba(37,99,235,0.10);
+    --pill-bg: rgba(37,99,235,0.10);
+    --pill-text: #1d4ed8;
+    --overlay-bg: rgba(2, 6, 23, 0.55);
+    --input-bg: #fbfdff;
+    --on-accent: #ffffff;
+    --input-text: #0f172a;
+    --input-placeholder: #94a3b8;
+    --topbar-bg: rgba(255,255,255,0.84);
+    --topbar-border: rgba(148, 163, 184, 0.20);
+    --sidebar-bg: linear-gradient(180deg, #07111f 0%, #111827 100%);
+    --sidebar-text: #f8fafc;
     --shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
     --radius-xl: 24px;
     --radius-lg: 18px;
@@ -59,4 +75,75 @@ input,
 select,
 textarea {
     font: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+html {
+    scrollbar-color: var(--accent) var(--surface-soft);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--surface-soft);
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--surface-soft);
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 999px;
+}
+
+.dropdown-menu {
+    background-color: var(--dropdown-bg);
+    color: var(--dropdown-text);
+    border-color: var(--border);
+}
+
+.dropdown-item {
+    color: var(--dropdown-text);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: var(--dropdown-hover);
+    color: var(--dropdown-text);
+}
+
+.badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: var(--pill-bg);
+    color: var(--pill-text);
+}
+
+.badge-pill.success {
+    background: rgba(47,158,68,0.14);
+    color: var(--success);
+}
+
+.badge-pill.danger {
+    background: rgba(220,38,38,0.14);
+    color: var(--danger);
+}
+
+.badge-pill.info {
+    background: var(--pill-bg);
+    color: var(--pill-text);
 }

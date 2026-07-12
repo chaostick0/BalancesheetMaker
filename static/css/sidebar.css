@@ -1,7 +1,7 @@
 .sidebar {
     width: 286px;
-    background: linear-gradient(180deg, #07111f 0%, #111827 100%);
-    color: white;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
     padding: 24px 20px;
     display: flex;
     flex-direction: column;
@@ -38,11 +38,12 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: white;
+    color: var(--sidebar-text);
     padding: 12px 14px;
     border-radius: 14px;
     transition: all 0.2s ease;
     border: 1px solid transparent;
+    min-height: 44px;
 }
 
 .sidebar a:hover,
@@ -81,17 +82,20 @@
 .menu-toggle {
     border: none;
     background: rgba(255,255,255,0.14);
-    color: white;
-    width: 40px;
-    height: 40px;
+    color: var(--sidebar-text);
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .sidebar-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.55);
+    background: var(--overlay-bg);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;

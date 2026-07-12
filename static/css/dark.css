@@ -1,37 +1,94 @@
 body.dark-mode {
-    color: #e2e8f0;
+    color-scheme: dark;
+    --bg: #020617;
+    --surface: rgba(15, 23, 42, 0.95);
+    --surface-strong: #111827;
+    --surface-soft: #0f172a;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #334155;
+    --accent: #60a5fa;
+    --accent-strong: #3b82f6;
+    --accent-soft: rgba(96, 165, 250, 0.18);
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --slate: #cbd5e1;
+    --icon-color: #f8fafc;
+    --icon-muted: #cbd5e1;
+    --dropdown-bg: #111827;
+    --dropdown-text: #f8fafc;
+    --dropdown-hover: rgba(96, 165, 250, 0.16);
+    --pill-bg: rgba(96, 165, 250, 0.16);
+    --pill-text: #bfdbfe;
+    --overlay-bg: rgba(2, 6, 23, 0.72);
+    --input-bg: #0f172a;
+    --on-accent: #f8fafc;
+    --input-text: #f8fafc;
+    --input-placeholder: #64748b;
+    --topbar-bg: rgba(15, 23, 42, 0.86);
+    --topbar-border: rgba(51, 65, 85, 0.8);
+    --sidebar-bg: linear-gradient(180deg, #020617 0%, #111827 100%);
+    --sidebar-text: #f8fafc;
+    --bs-body-color: var(--text);
+    --bs-body-bg: var(--bg);
+    --bs-emphasis-color: var(--text);
+    --bs-secondary-color: var(--muted);
+    --bs-secondary-bg: var(--surface-strong);
+    --bs-tertiary-bg: var(--surface-soft);
+    --bs-border-color: var(--border);
+    --bs-dropdown-bg: var(--dropdown-bg);
+    --bs-dropdown-color: var(--dropdown-text);
+    --bs-dropdown-link-color: var(--dropdown-text);
+    --bs-dropdown-link-hover-color: var(--dropdown-text);
+    --bs-dropdown-link-hover-bg: var(--dropdown-hover);
+    --bs-dropdown-link-active-bg: var(--accent-soft);
+    --bs-dropdown-link-active-color: var(--text);
+    --bs-modal-bg: var(--surface-strong);
+    --bs-modal-color: var(--text);
+    --bs-tooltip-bg: var(--surface-strong);
+    --bs-tooltip-color: var(--text);
+    color: var(--text);
     background:
         radial-gradient(circle at top left, rgba(37,99,235,0.24), transparent 24%),
         linear-gradient(135deg, #020617 0%, #111827 100%);
 }
 
-body.dark-mode .topbar,
-body.dark-mode .hero-card,
-body.dark-mode .card,
-body.dark-mode .form-card,
-body.dark-mode .table-card,
-body.dark-mode .panel-card,
-body.dark-mode .toast-card,
-body.dark-mode .summary-card,
-body.dark-mode .stat-card {
-    background: #111827;
-    color: #e2e8f0;
-    box-shadow: 0 18px 45px rgba(0,0,0,0.3);
+body.dark-mode .dropdown-menu,
+body.dark-mode .modal-content,
+body.dark-mode .tooltip-inner {
+    background-color: var(--dropdown-bg);
+    color: var(--dropdown-text);
+    border-color: var(--border);
+}
+
+body.dark-mode .dropdown-item,
+body.dark-mode .dropdown-item i {
+    color: var(--dropdown-text);
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+    background-color: var(--dropdown-hover);
+    color: var(--dropdown-text);
+}
+
+body.dark-mode .dropdown-divider {
+    border-color: var(--border);
 }
 
 body.dark-mode .form-control,
 body.dark-mode .form-select {
-    background: #0f172a;
-    color: #e2e8f0;
-    border-color: #334155;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--border);
 }
 
-body.dark-mode .table thead th,
-body.dark-mode .group-row th {
-    background: #1e293b;
-    color: #f8fafc;
+body.dark-mode .form-control::placeholder,
+body.dark-mode .form-select::placeholder {
+    color: var(--input-placeholder);
 }
 
 body.dark-mode .empty-state {
-    background: rgba(37,99,235,0.14);
+    background: var(--accent-soft);
 }

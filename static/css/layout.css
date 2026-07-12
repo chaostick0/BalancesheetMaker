@@ -15,9 +15,10 @@
     align-items: center;
     gap: 14px;
     padding: 22px 26px;
-    background: rgba(255,255,255,0.84);
+    background: var(--topbar-bg);
     backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.20);
+    border-bottom: 1px solid var(--topbar-border);
+    color: var(--text);
 }
 
 .topbar-copy {
@@ -59,6 +60,14 @@
     color: var(--muted);
     max-width: 760px;
     margin-bottom: 0;
+}
+
+.eyebrow {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.74rem;
+    margin-bottom: 0.2rem;
 }
 
 .app-footer {

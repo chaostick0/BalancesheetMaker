@@ -24,6 +24,9 @@
 
 .toast-card {
     animation: toast-slide 0.3s ease;
+    background: var(--surface-strong);
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 
 @keyframes toast-slide {

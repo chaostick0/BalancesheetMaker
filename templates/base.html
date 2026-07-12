@@ -7,6 +7,7 @@
     <title>{% block page_title %}Balance Sheet Maker{% endblock %}</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/fonts/bootstrap-icons.woff2" as="font" type="font/woff2" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
@@ -138,11 +139,8 @@
                         type="button"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
-                        aria-label="More actions"
-                        style="color:#111827 !important;background:transparent;border:none;">
-
-                        <span style="font-size:1.5rem;font-weight:700;line-height:1;">&#8942;</span>
-
+                        aria-label="More actions">
+                        <i class="bi bi-three-dots-vertical"></i>
                     </button>
 
                     <ul class="dropdown-menu dropdown-menu-end">

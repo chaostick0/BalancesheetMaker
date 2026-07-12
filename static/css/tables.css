@@ -23,8 +23,8 @@
 }
 
 .table thead th {
-    background: #0f172a;
-    color: #fff;
+    background: var(--surface-strong);
+    color: var(--text);
     font-size: 0.78rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -32,16 +32,16 @@
 }
 
 .table tbody tr:nth-child(even) {
-    background: rgba(248,250,252,0.9);
+    background: var(--surface-soft);
 }
 
 .table tbody tr:hover {
-    background: rgba(37,99,235,0.08);
+    background: var(--accent-soft);
 }
 
 .table tbody tr.group-row th {
-    background: #e2e8f0;
-    color: #0f172a;
+    background: var(--surface-soft);
+    color: var(--text);
     font-weight: 700;
 }
 
@@ -59,7 +59,7 @@
 .table-sticky-footer {
     position: sticky;
     bottom: 0;
-    background: #f8fbff;
+    background: var(--surface-soft);
     z-index: 2;
 }
 
@@ -147,9 +147,11 @@
     .balance-table td.currency input {
         max-width: 150px;
         text-align: right;
+        min-height: 44px;
+        font-size: 16px;
     }
 
     body.dark-mode .balance-table tr.data-row {
-        background: #111827;
+        background: var(--surface-strong);
     }
 }

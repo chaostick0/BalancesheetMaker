@@ -13,17 +13,22 @@ document.addEventListener("DOMContentLoaded", function () {
         sidebar?.classList.remove("open");
         backdrop?.classList.remove("show");
         document.body.classList.remove("sidebar-open");
+        document.body.style.overflow = "";
     }
 
     function openSidebar() {
         sidebar?.classList.add("open");
         backdrop?.classList.add("show");
         document.body.classList.add("sidebar-open");
+        document.body.style.overflow = "hidden";
     }
 
     menuToggle?.addEventListener("click", openSidebar);
     sidebarClose?.addEventListener("click", closeSidebar);
     backdrop?.addEventListener("click", closeSidebar);
+    document.querySelectorAll(".sidebar-nav a").forEach(function (link) {
+        link.addEventListener("click", closeSidebar);
+    });
 
     window.addEventListener("resize", function () {
         if (window.innerWidth > 991) {

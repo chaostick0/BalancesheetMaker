@@ -17,8 +17,14 @@
     padding: 12px 14px;
     border-radius: 14px;
     border: 1px solid var(--border);
-    background: #fbfdff;
+    background: var(--input-bg);
+    color: var(--input-text);
     transition: all 0.2s ease;
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+    color: var(--input-placeholder);
 }
 
 .form-control:focus,
@@ -37,7 +43,7 @@
     top: 50%;
     left: 12px;
     transform: translateY(-50%);
-    color: var(--muted);
+    color: var(--icon-muted);
 }
 
 .input-with-icon .form-control {
@@ -59,4 +65,14 @@
 .required-indicator {
     color: var(--danger);
     margin-left: 2px;
+}
+
+input[type="number"] {
+    font-variant-numeric: tabular-nums;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    opacity: 1;
+    cursor: pointer;
 }

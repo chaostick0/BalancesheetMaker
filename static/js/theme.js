@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ].filter(Boolean);
 
     const savedTheme = localStorage.getItem('balance-sheet-theme') || 'light';
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
     function applyIcon(isDark) {
         toggles.forEach(function (btn) {
@@ -15,14 +16,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function applyTheme(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', isDark ? '#020617' : '#0f172a');
+        }
+    }
+
     if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
+        applyTheme(true);
+    } else {
+        applyTheme(false);
     }
     applyIcon(savedTheme === 'dark');
 
     function toggleTheme() {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
+        const isDark = !document.body.classList.contains('dark-mode');
+        applyTheme(isDark);
         localStorage.setItem('balance-sheet-theme', isDark ? 'dark' : 'light');
         applyIcon(isDark);
     }
