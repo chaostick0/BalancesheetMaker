@@ -67,24 +67,26 @@
 }
 
 .btn-ghost {
-    background: transparent;
-    border: none;
-    color: var(--text) !important;
+    background: var(--surface-strong);
+    border: 1px solid var(--border);
+    color: var(--icon-color) !important;
     min-width: 44px;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    box-shadow: none;
 }
 
 .btn-ghost:hover,
 .btn-ghost:focus-visible {
     background: var(--dropdown-hover);
-    color: var(--text) !important;
+    color: var(--icon-color) !important;
+    border-color: var(--border);
 }
 
 .btn-ghost i {
-    color: inherit !important;
+    color: var(--icon-color) !important;
     font-size: 1.15rem;
 }
 
