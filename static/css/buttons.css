@@ -30,13 +30,31 @@
     background: transparent;
     border: 0;
     color: var(--muted);
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .theme-toggle {
-    margin-left: auto;
     border: 0;
     border-radius: 999px;
     padding: 8px 12px;
     background: #e5edff;
     color: var(--accent);
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Icon-only buttons (menu toggle, sidebar close, per-row remove, dropdown
+   "more" trigger) get a comfortable minimum tap target on touch devices. */
+@media (max-width: 768px) {
+    .btn-sm {
+        min-height: 40px;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    #topbarMoreBtn {
+        min-height: 44px;
+        min-width: 44px;
+    }
 }

@@ -148,3 +148,42 @@
     background: rgba(21,128,61,0.12);
     color: var(--success);
 }
+
+.health-pill.warn {
+    background: rgba(220,38,38,0.12);
+    color: var(--danger);
+}
+
+.kpi-trend.down {
+    background: rgba(220,38,38,0.22);
+}
+
+/* Mobile-only condensed summary strip shown above the KPI grid */
+.mobile-summary-strip {
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--surface-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 14px 16px;
+}
+
+.mobile-summary-strip > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: center;
+    flex: 1;
+}
+
+.mobile-summary-strip .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+}
+
+.mobile-summary-strip .value {
+    font-size: 0.98rem;
+    font-weight: 800;
+}

@@ -5,8 +5,16 @@
     box-shadow: var(--shadow);
 }
 
+/* Desktop/tablet: normal table, horizontal scroll only if the viewport
+   is genuinely too narrow for it (rare above 768px). */
+@media (min-width: 769px) {
+    .table-card .table {
+        min-width: 760px;
+        margin-bottom: 0;
+    }
+}
+
 .table-card .table {
-    min-width: 760px;
     margin-bottom: 0;
 }
 
@@ -53,4 +61,95 @@
     bottom: 0;
     background: #f8fbff;
     z-index: 2;
+}
+
+/* ============================================================
+   MOBILE STACKED-CARD TABLE (below 768px)
+   Converts .balance-table (assets/liabilities editable tables)
+   from a horizontally-scrolling table into a vertical stack of
+   readable, tappable cards. Requires each <td> to carry a
+   data-label attribute (see assets.html / liabilities.html).
+   ============================================================ */
+@media (max-width: 768px) {
+    .table-card {
+        overflow-x: visible;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .balance-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+    }
+
+    .balance-table,
+    .balance-table tbody,
+    .balance-table tr,
+    .balance-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .balance-table tr.group-row {
+        background: transparent;
+        padding: 4px 4px 8px;
+        font-weight: 700;
+        color: var(--slate);
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+    }
+
+    .balance-table tr.group-row th {
+        background: transparent;
+        padding: 0;
+    }
+
+    .balance-table tr.data-row {
+        background: var(--surface-strong);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 12px 14px;
+        margin-bottom: 12px;
+    }
+
+    .balance-table td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        white-space: normal;
+        text-align: right;
+    }
+
+    .balance-table td:last-child {
+        border-bottom: none;
+        padding-top: 12px;
+        justify-content: flex-end;
+    }
+
+    .balance-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 0.82rem;
+        text-align: left;
+        flex-shrink: 0;
+    }
+
+    .balance-table td.currency input {
+        max-width: 150px;
+        text-align: right;
+    }
+
+    body.dark-mode .balance-table tr.data-row {
+        background: #111827;
+    }
 }

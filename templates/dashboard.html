@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% block page_title %}Dashboard · Balance Sheet Maker{% endblock %}
+{% block topbar_title %}Financial dashboard{% endblock %}
+
 {% block content %}
 <div class="page-shell">
     <section class="hero-card fade-in">
@@ -24,28 +27,42 @@
         {% endif %}
     </section>
 
+    <!-- Condensed mobile-only summary strip: shows headline numbers before
+         the user has to scroll past all 6 KPI cards on a small screen. -->
+    <div class="mobile-summary-strip d-flex d-md-none">
+        <div><span class="label">Assets</span><span class="value">₹ {{ "{:,.0f}".format(assets_current) }}</span></div>
+        <div><span class="label">Liabilities</span><span class="value">₹ {{ "{:,.0f}".format(liabilities_current) }}</span></div>
+        <div><span class="label">Net Worth</span><span class="value">₹ {{ "{:,.0f}".format(assets_current - liabilities_current) }}</span></div>
+    </div>
+
+    {% set net_worth_current = assets_current - liabilities_current %}
+    {% set net_worth_previous = assets_previous - liabilities_previous %}
+    {% set assets_pct = ((assets_current - assets_previous) / assets_previous * 100) if assets_previous else 0 %}
+    {% set liabilities_pct = ((liabilities_current - liabilities_previous) / liabilities_previous * 100) if liabilities_previous else 0 %}
+    {% set networth_pct = ((net_worth_current - net_worth_previous) / net_worth_previous * 100) if net_worth_previous else 0 %}
+
     <div class="kpi-grid">
         <div class="kpi-card assets card-hover">
-            <div class="top"><span class="kpi-icon">◷</span><span class="kpi-trend">{% if assets_previous %}{% if assets_current >= assets_previous %}▲ {{ "{:,.1f}".format(((assets_current - assets_previous) / assets_previous) * 100) }}%{% else %}▼ {{ "{:,.1f}".format(((assets_previous - assets_current) / assets_previous) * 100) }}%{% endif %}{% else %}—{% endif %}</span></div>
-            <div class="kpi-value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(assets_current) }}</div>
+            <div class="top"><span class="kpi-icon">◷</span><span class="kpi-trend {{ 'up' if assets_pct >= 0 else 'down' }}">{{ '▲' if assets_pct >= 0 else '▼' }} {{ "{:,.1f}".format(assets_pct|abs) }}%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(assets_current) }}</div>
             <div class="kpi-meta">Assets</div>
-            <div class="kpi-meta">Updated just now</div>
+            <div class="kpi-meta">Vs previous year</div>
         </div>
         <div class="kpi-card liabilities card-hover">
-            <div class="top"><span class="kpi-icon">◫</span><span class="kpi-trend">{% if liabilities_previous %}{% if liabilities_current <= liabilities_previous %}▼ {{ "{:,.1f}".format(((liabilities_previous - liabilities_current) / liabilities_previous) * 100) }}%{% else %}▲ {{ "{:,.1f}".format(((liabilities_current - liabilities_previous) / liabilities_previous) * 100) }}%{% endif %}{% else %}—{% endif %}</span></div>
-            <div class="kpi-value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(liabilities_current) }}</div>
+            <div class="top"><span class="kpi-icon">◫</span><span class="kpi-trend {{ 'up' if liabilities_pct >= 0 else 'down' }}">{{ '▲' if liabilities_pct >= 0 else '▼' }} {{ "{:,.1f}".format(liabilities_pct|abs) }}%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(liabilities_current) }}</div>
             <div class="kpi-meta">Liabilities</div>
-            <div class="kpi-meta">Stable trend</div>
+            <div class="kpi-meta">Vs previous year</div>
         </div>
         <div class="kpi-card networth card-hover">
-            <div class="top"><span class="kpi-icon">◧</span><span class="kpi-trend">{% if previous_difference %}{% if current_difference >= previous_difference %}▲ {{ "{:,.1f}".format(((current_difference - previous_difference) / previous_difference) * 100) }}%{% else %}▼ {{ "{:,.1f}".format(((previous_difference - current_difference) / previous_difference) * 100) }}%{% endif %}{% else %}—{% endif %}</span></div>
-            <div class="kpi-value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(assets_current - liabilities_current) }}</div>
+            <div class="top"><span class="kpi-icon">◧</span><span class="kpi-trend {{ 'up' if networth_pct >= 0 else 'down' }}">{{ '▲' if networth_pct >= 0 else '▼' }} {{ "{:,.1f}".format(networth_pct|abs) }}%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(net_worth_current) }}</div>
             <div class="kpi-meta">Net Worth</div>
-            <div class="kpi-meta">Strong position</div>
+            <div class="kpi-meta">{{ 'Positive position' if net_worth_current >= 0 else 'Negative position' }}</div>
         </div>
         <div class="kpi-card difference card-hover">
             <div class="top"><span class="kpi-icon">◍</span><span class="kpi-trend">{{ status_message }}</span></div>
-            <div class="kpi-value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(current_difference) }}</div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(current_difference) }}</div>
             <div class="kpi-meta">Difference</div>
             <div class="kpi-meta">Balance check</div>
         </div>
@@ -56,8 +73,8 @@
             <div class="kpi-meta">Liquidity</div>
         </div>
         <div class="kpi-card working-capital card-hover">
-            <div class="top"><span class="kpi-icon">◌</span><span class="kpi-trend">{% if previous_difference %}{% if current_difference >= previous_difference %}▲ {{ "{:,.1f}".format(((current_difference - previous_difference) / previous_difference) * 100) }}%{% else %}▼ {{ "{:,.1f}".format(((previous_difference - current_difference) / previous_difference) * 100) }}%{% endif %}{% else %}—{% endif %}</span></div>
-            <div class="kpi-value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(assets_current - liabilities_current) }}</div>
+            <div class="top"><span class="kpi-icon">◌</span><span class="kpi-trend {{ 'up' if networth_pct >= 0 else 'down' }}">{{ '▲' if networth_pct >= 0 else '▼' }} {{ "{:,.1f}".format(networth_pct|abs) }}%</span></div>
+            <div class="kpi-value">₹ {{ "{:,.2f}".format(net_worth_current) }}</div>
             <div class="kpi-meta">Working Capital</div>
             <div class="kpi-meta">Operating buffer</div>
         </div>
@@ -70,18 +87,27 @@
                 <span class="badge-pill info">Live trend</span>
             </div>
             <div class="chart-placeholder">
-                <canvas id="balanceChart" height="220"></canvas>
+                <canvas id="balanceChart" height="220"
+                    data-assets="{{ assets_current }}"
+                    data-liabilities="{{ liabilities_current }}"
+                    data-net-worth="{{ assets_current - liabilities_current }}"></canvas>
             </div>
         </div>
         <div class="panel-card">
             <div class="panel-title">
                 <h4>Financial Health</h4>
-                <span class="health-pill">{{ 'Healthy' if balanced else 'Needs attention' }}</span>
+                <span class="health-pill {{ 'ok' if balanced else 'warn' }}">{{ 'Healthy' if balanced else 'Needs review' }}</span>
             </div>
             <div class="health-card">
-                <p class="subtitle mb-3">Your balance sheet remains structurally sound with a balanced position and healthy capital structure.</p>
+                <p class="subtitle mb-3">
+                    {% if balanced %}
+                        Your balance sheet is balanced — assets match liabilities and equity for both years shown.
+                    {% else %}
+                        Assets and liabilities don't currently match by ₹ {{ "{:,.2f}".format(current_difference|abs) }}. Review recent entries before finalizing the report.
+                    {% endif %}
+                </p>
                 <div class="d-flex justify-content-between align-items-center mb-2"><span>Balance Status</span><strong>{{ status_message }}</strong></div>
-                <div class="d-flex justify-content-between align-items-center mb-2"><span>Previous Year Gap</span><strong>{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(assets_previous - liabilities_previous) }}</strong></div>
+                <div class="d-flex justify-content-between align-items-center mb-2"><span>Previous Year Gap</span><strong>₹ {{ "{:,.2f}".format(assets_previous - liabilities_previous) }}</strong></div>
                 <div class="d-flex justify-content-between align-items-center"><span>Insight</span><strong>{{ trend_message }}</strong></div>
             </div>
         </div>

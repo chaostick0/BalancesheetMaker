@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% block page_title %}Equity &amp; Liabilities · Balance Sheet Maker{% endblock %}
+{% block topbar_title %}Equity &amp; liabilities workspace{% endblock %}
+
 {% block content %}
 <div class="page-shell">
     <section class="hero-card fade-in">
@@ -13,10 +16,10 @@
     </section>
 
     <div class="row g-4">
-        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Total Liabilities</div><div class="value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(liabilities|sum(attribute='current_amount') if liabilities else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Total Liabilities</div><div class="value">₹ {{ "{:,.2f}".format(liabilities|sum(attribute='current_amount') if liabilities else 0) }}</div></div></div>
         <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Largest Group</div><div class="value">{{ liabilities[0].group_name if liabilities else '—' }}</div></div></div>
-        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Current Year Total</div><div class="value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(liabilities|sum(attribute='current_amount') if liabilities else 0) }}</div></div></div>
-        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Previous Year Total</div><div class="value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(liabilities|sum(attribute='previous_amount') if liabilities else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Current Year Total</div><div class="value">₹ {{ "{:,.2f}".format(liabilities|sum(attribute='current_amount') if liabilities else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Previous Year Total</div><div class="value">₹ {{ "{:,.2f}".format(liabilities|sum(attribute='previous_amount') if liabilities else 0) }}</div></div></div>
     </div>
 
     {% if not liabilities %}
@@ -28,35 +31,26 @@
     {% endif %}
 
     <div class="card p-3 mb-4" id="liability-form">
-        <form method="POST" action="/add-liability" class="row g-2 align-items-end" id="liabilityAddForm">
+        <form method="POST" action="/add-liability" class="row g-2 align-items-end">
             <div class="col-md-4">
                 <label class="form-label">Liability Name <span class="required-indicator">*</span></label>
                 <input class="form-control" type="text" name="item_name" placeholder="New liability item" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Group</label>
-                <select class="form-control" name="group_name_select" id="liabilityGroupSelect">
-                    <option value="">Select existing group</option>
-                    {% for group_name in group_names %}
-                    <option value="{{ group_name }}">{{ group_name }}</option>
-                    {% endfor %}
-                    <option value="__new__">Add new group</option>
-                </select>
-                <input class="form-control mt-2" type="text" name="group_name" placeholder="Custom Group" id="liabilityGroupInput">
+                <input class="form-control" type="text" name="group_name" placeholder="Custom Group">
             </div>
             <div class="col-md-2">
                 <label class="form-label">Note</label>
                 <input class="form-control" type="text" name="note_no" placeholder="N/A">
             </div>
             <div class="col-md-3">
-                <button class="btn btn-primary w-100" type="submit">Add Row</button>
+                <button class="btn btn-primary w-100">Add Row</button>
             </div>
         </form>
     </div>
 
-    <div class="alert alert-warning d-none" id="unsavedBanner">You have unsaved changes. Save them before leaving this page.</div>
-
-    <form method="POST" action="/save-liabilities" id="liabilitiesForm">
+    <form method="POST" action="/save-liabilities">
         <div class="action-row">
             <div class="search-wrap input-with-icon">
                 <span class="icon">⌕</span>
@@ -66,7 +60,7 @@
         </div>
 
         <div class="table-card">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle balance-table">
                 <thead>
                     <tr>
                         <th>Group</th>
@@ -87,19 +81,15 @@
                             </tr>
                         {% endif %}
                         <tr class="data-row">
-                            <td>{{ row.group_name }}</td>
-                            <td>{{ row.item_name }}</td>
-                            <td>{{ row.note_no }}</td>
-                            <td class="currency">
-                                <input type="number" step="0.01" min="0" class="form-control amount-input" name="current_{{ row.id }}" value="{{ row.current_amount }}">
-                                <div class="invalid-feedback d-block" data-error-for="current_{{ row.id }}"></div>
-                            </td>
-                            <td class="currency">
-                                <input type="number" step="0.01" min="0" class="form-control amount-input" name="previous_{{ row.id }}" value="{{ row.previous_amount }}">
-                                <div class="invalid-feedback d-block" data-error-for="previous_{{ row.id }}"></div>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-danger remove-row-btn" data-remove-url="/remove-liability/{{ row.id }}" type="button">Remove</button>
+                            <td data-label="Group">{{ row.group_name }}</td>
+                            <td data-label="Particular">{{ row.item_name }}</td>
+                            <td data-label="Note">{{ row.note_no }}</td>
+                            <td class="currency" data-label="Current Year"><input type="number" step="0.01" class="form-control" name="current_{{ row.id }}" value="{{ row.current_amount }}"></td>
+                            <td class="currency" data-label="Previous Year"><input type="number" step="0.01" class="form-control" name="previous_{{ row.id }}" value="{{ row.previous_amount }}"></td>
+                            <td data-label="">
+                                <form method="POST" action="/remove-liability/{{ row.id }}" class="d-inline">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}

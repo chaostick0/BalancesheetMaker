@@ -7,13 +7,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    // Real figures come from the server via data attributes on the canvas
+    // (see dashboard.html) instead of being hardcoded here.
+    const assets = parseFloat(canvas.dataset.assets || '0');
+    const liabilities = parseFloat(canvas.dataset.liabilities || '0');
+    const netWorth = parseFloat(canvas.dataset.netWorth || '0');
+
     new Chart(canvas, {
         type: 'bar',
         data: {
             labels: ['Assets', 'Liabilities', 'Net Worth'],
             datasets: [{
                 label: 'Current Position',
-                data: [1200000, 900000, 300000],
+                data: [assets, liabilities, netWorth],
                 backgroundColor: ['#2563eb', '#14b8a6', '#7c3aed'],
                 borderRadius: 10
             }]

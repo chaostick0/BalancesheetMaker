@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% block page_title %}Final Report · Balance Sheet Maker{% endblock %}
+{% block topbar_title %}Final report{% endblock %}
+
 {% block content %}
 <div class="page-shell">
     <section class="hero-card text-center fade-in report-hero">
@@ -8,7 +11,7 @@
         <div class="report-meta-row mt-3">
             <span>FY {{ company.current_year if company else "—" }}</span>
             <span>Previous FY {{ company.previous_year if company else "—" }}</span>
-            <span>Currency {{ (company.currency if company and company.currency else '₹') }}</span>
+            <span>Currency {{ company.currency if company else "₹" }}</span>
         </div>
     </section>
 
@@ -17,7 +20,7 @@
             <div class="table-card report-panel">
                 <div class="report-panel-header">
                     <h4>Assets</h4>
-                    <span class="badge-pill success">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(total_assets) }}</span>
+                    <span class="badge-pill success">₹ {{ "{:,.2f}".format(total_assets) }}</span>
                 </div>
                 <table class="table table-hover align-middle">
                     <thead>
@@ -25,9 +28,9 @@
                     </thead>
                     <tbody>
                         {% for item in assets %}
-                        <tr><td>{{ item.item_name }}</td><td class="currency">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(item.current_amount) }}</td></tr>
+                        <tr><td>{{ item.item_name }}</td><td class="currency">₹ {{ "{:,.2f}".format(item.current_amount) }}</td></tr>
                         {% endfor %}
-                        <tr class="group-row"><th>Total Assets</th><th class="currency">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(total_assets) }}</th></tr>
+                        <tr class="group-row"><th>Total Assets</th><th class="currency">₹ {{ "{:,.2f}".format(total_assets) }}</th></tr>
                     </tbody>
                 </table>
             </div>
@@ -37,7 +40,7 @@
             <div class="table-card report-panel">
                 <div class="report-panel-header">
                     <h4>Equity &amp; Liabilities</h4>
-                    <span class="badge-pill info">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(total_liabilities) }}</span>
+                    <span class="badge-pill info">₹ {{ "{:,.2f}".format(total_liabilities) }}</span>
                 </div>
                 <table class="table table-hover align-middle">
                     <thead>
@@ -45,9 +48,9 @@
                     </thead>
                     <tbody>
                         {% for item in liabilities %}
-                        <tr><td>{{ item.item_name }}</td><td class="currency">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(item.current_amount) }}</td></tr>
+                        <tr><td>{{ item.item_name }}</td><td class="currency">₹ {{ "{:,.2f}".format(item.current_amount) }}</td></tr>
                         {% endfor %}
-                        <tr class="group-row"><th>Total Equity &amp; Liabilities</th><th class="currency">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(total_liabilities) }}</th></tr>
+                        <tr class="group-row"><th>Total Equity &amp; Liabilities</th><th class="currency">₹ {{ "{:,.2f}".format(total_liabilities) }}</th></tr>
                     </tbody>
                 </table>
             </div>

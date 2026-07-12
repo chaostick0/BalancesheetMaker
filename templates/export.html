@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% block page_title %}Export &amp; Import · Balance Sheet Maker{% endblock %}
+{% block topbar_title %}Export &amp; import{% endblock %}
+
 {% block content %}
 <div class="page-shell">
     <section class="hero-card fade-in">
@@ -36,12 +39,7 @@
                 <form method="POST" action="/import/csv" enctype="multipart/form-data" class="empty-state">
                     <label class="form-label">Import CSV</label>
                     <input class="form-control" type="file" name="csv_file" accept=".csv" required>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" name="replace_existing" id="replaceExisting">
-                        <label class="form-check-label" for="replaceExisting">Replace existing data</label>
-                    </div>
                     <button class="btn btn-primary mt-3">Import Data</button>
-                    <a href="/export/csv" class="btn btn-outline-secondary mt-3">Download sample CSV</a>
                 </form>
             </div>
         </div>
