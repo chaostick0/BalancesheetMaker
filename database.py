@@ -278,7 +278,7 @@ def delete_balance_sheet_row(item_id, db_path=None):
         return cursor.rowcount > 0
 
 
-def import_balance_sheet_from_csv(csv_text, db_path=None):
+def import_balance_sheet_from_csv(csv_text, db_path=None, replace_existing=False):
     rows = []
     reader = csv.DictReader(StringIO(csv_text))
     for row in reader:
@@ -304,6 +304,8 @@ def import_balance_sheet_from_csv(csv_text, db_path=None):
         return 0
     with get_connection(db_path) as conn:
         cursor = conn.cursor()
+        if replace_existing:
+            clear_balance_sheet(db_path=db_path)
         cursor.executemany(
             """
             INSERT INTO balance_sheet (section, group_name, item_name, note_no, current_amount, previous_amount)

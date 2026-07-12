@@ -120,6 +120,53 @@ class DatabaseHelpersTests(unittest.TestCase):
         finally:
             os.remove(db_path)
 
+    def test_import_balance_sheet_from_csv_replaces_existing_rows_when_requested(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
+            db_path = tmp.name
+
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                CREATE TABLE balance_sheet (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    section TEXT,
+                    group_name TEXT,
+                    item_name TEXT,
+                    note_no TEXT,
+                    current_amount REAL DEFAULT 0,
+                    previous_amount REAL DEFAULT 0
+                )
+                """
+            )
+            cursor.execute(
+                "INSERT INTO balance_sheet (section, group_name, item_name, note_no, current_amount, previous_amount) VALUES (?,?,?,?,?,?)",
+                ("ASSETS", "Existing", "Old Item", "0", 10, 5),
+            )
+            conn.commit()
+            conn.close()
+
+            imported = import_balance_sheet_from_csv(
+                "section,group_name,item_name,note_no,current_amount,previous_amount\nASSETS,New Group,New Item,1,100,80\n",
+                db_path=db_path,
+                replace_existing=True,
+            )
+
+            self.assertEqual(imported, 1)
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM balance_sheet")
+            count = cursor.fetchone()[0]
+            cursor.execute("SELECT item_name, group_name FROM balance_sheet")
+            rows = cursor.fetchall()
+            conn.close()
+
+            self.assertEqual(count, 1)
+            self.assertEqual(rows[0], ("New Item", "New Group"))
+        finally:
+            os.remove(db_path)
+
     def test_insert_and_delete_balance_sheet_row(self):
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
             db_path = tmp.name

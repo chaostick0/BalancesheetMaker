@@ -13,10 +13,10 @@
     </section>
 
     <div class="row g-4">
-        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Total Assets</div><div class="value">₹ {{ "{:,.2f}".format(assets|sum(attribute='current_amount') if assets else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Total Assets</div><div class="value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(assets|sum(attribute='current_amount') if assets else 0) }}</div></div></div>
         <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Largest Group</div><div class="value">{{ assets[0].group_name if assets else '—' }}</div></div></div>
-        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Current Year Total</div><div class="value">₹ {{ "{:,.2f}".format(assets|sum(attribute='current_amount') if assets else 0) }}</div></div></div>
-        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Previous Year Total</div><div class="value">₹ {{ "{:,.2f}".format(assets|sum(attribute='previous_amount') if assets else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Current Year Total</div><div class="value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(assets|sum(attribute='current_amount') if assets else 0) }}</div></div></div>
+        <div class="col-md-3"><div class="summary-card card-hover"><div class="label">Previous Year Total</div><div class="value">{{ (company.currency if company and company.currency else '₹') }} {{ "{:,.2f}".format(assets|sum(attribute='previous_amount') if assets else 0) }}</div></div></div>
     </div>
 
     {% if not assets %}
@@ -28,26 +28,35 @@
     {% endif %}
 
     <div class="card p-3 mb-4" id="asset-form">
-        <form method="POST" action="/add-asset" class="row g-2 align-items-end">
+        <form method="POST" action="/add-asset" class="row g-2 align-items-end" id="assetAddForm">
             <div class="col-md-4">
                 <label class="form-label">Asset Name <span class="required-indicator">*</span></label>
                 <input class="form-control" type="text" name="item_name" placeholder="New asset item" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Group</label>
-                <input class="form-control" type="text" name="group_name" placeholder="Custom Group">
+                <select class="form-control" name="group_name_select" id="assetGroupSelect">
+                    <option value="">Select existing group</option>
+                    {% for group_name in group_names %}
+                    <option value="{{ group_name }}">{{ group_name }}</option>
+                    {% endfor %}
+                    <option value="__new__">Add new group</option>
+                </select>
+                <input class="form-control mt-2" type="text" name="group_name" placeholder="Custom Group" id="assetGroupInput">
             </div>
             <div class="col-md-2">
                 <label class="form-label">Note</label>
                 <input class="form-control" type="text" name="note_no" placeholder="N/A">
             </div>
             <div class="col-md-3">
-                <button class="btn btn-primary w-100">Add Row</button>
+                <button class="btn btn-primary w-100" type="submit">Add Row</button>
             </div>
         </form>
     </div>
 
-    <form method="POST" action="/save-assets">
+    <div class="alert alert-warning d-none" id="unsavedBanner">You have unsaved changes. Save them before leaving this page.</div>
+
+    <form method="POST" action="/save-assets" id="assetsForm">
         <div class="action-row">
             <div class="search-wrap input-with-icon">
                 <span class="icon">⌕</span>
@@ -81,12 +90,16 @@
                             <td>{{ row.group_name }}</td>
                             <td>{{ row.item_name }}</td>
                             <td>{{ row.note_no }}</td>
-                            <td class="currency"><input type="number" step="0.01" class="form-control" name="current_{{ row.id }}" value="{{ row.current_amount }}"></td>
-                            <td class="currency"><input type="number" step="0.01" class="form-control" name="previous_{{ row.id }}" value="{{ row.previous_amount }}"></td>
+                            <td class="currency">
+                                <input type="number" step="0.01" min="0" class="form-control amount-input" name="current_{{ row.id }}" value="{{ row.current_amount }}">
+                                <div class="invalid-feedback d-block" data-error-for="current_{{ row.id }}"></div>
+                            </td>
+                            <td class="currency">
+                                <input type="number" step="0.01" min="0" class="form-control amount-input" name="previous_{{ row.id }}" value="{{ row.previous_amount }}">
+                                <div class="invalid-feedback d-block" data-error-for="previous_{{ row.id }}"></div>
+                            </td>
                             <td>
-                                <form method="POST" action="/remove-asset/{{ row.id }}" class="d-inline">
-                                    <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
-                                </form>
+                                <button class="btn btn-sm btn-outline-danger remove-row-btn" data-remove-url="/remove-asset/{{ row.id }}" type="button">Remove</button>
                             </td>
                         </tr>
                     {% endfor %}
