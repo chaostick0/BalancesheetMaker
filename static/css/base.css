@@ -1,38 +1,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 :root {
-    color-scheme: light;
-    --bg: #f4f7ff;
-    --surface: rgba(255,255,255,0.94);
-    --surface-strong: #ffffff;
-    --surface-soft: #f8fbff;
-    --text: #0f172a;
-    --muted: #64748b;
-    --border: #dfe7f2;
-    --accent: #2563eb;
-    --accent-strong: #1d4ed8;
-    --accent-soft: rgba(37,99,235,0.12);
-    --success: #2f9e44;
-    --warning: #f59f00;
-    --danger: #dc2626;
-    --slate: #475569;
-    --icon-color: #0f172a;
-    --icon-muted: #64748b;
-    --dropdown-bg: #ffffff;
-    --dropdown-text: #0f172a;
-    --dropdown-hover: rgba(37,99,235,0.10);
-    --pill-bg: rgba(37,99,235,0.10);
-    --pill-text: #1d4ed8;
-    --overlay-bg: rgba(2, 6, 23, 0.55);
-    --input-bg: #fbfdff;
-    --on-accent: #ffffff;
-    --input-text: #0f172a;
-    --input-placeholder: #94a3b8;
-    --topbar-bg: rgba(255,255,255,0.84);
-    --topbar-border: rgba(148, 163, 184, 0.20);
-    --sidebar-bg: linear-gradient(180deg, #07111f 0%, #111827 100%);
+    color-scheme: dark;
+    --bg: #020617;
+    --surface: rgba(15, 23, 42, 0.95);
+    --surface-strong: #111827;
+    --surface-soft: #0f172a;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #334155;
+    --accent: #60a5fa;
+    --accent-strong: #3b82f6;
+    --accent-soft: rgba(96, 165, 250, 0.18);
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --slate: #cbd5e1;
+    --icon-color: #f8fafc;
+    --icon-muted: #cbd5e1;
+    --dropdown-bg: #111827;
+    --dropdown-text: #f8fafc;
+    --dropdown-hover: rgba(96, 165, 250, 0.16);
+    --pill-bg: rgba(96, 165, 250, 0.16);
+    --pill-text: #bfdbfe;
+    --overlay-bg: rgba(2, 6, 23, 0.72);
+    --input-bg: #0f172a;
+    --on-accent: #f8fafc;
+    --input-text: #f8fafc;
+    --input-placeholder: #64748b;
+    --topbar-bg: rgba(15, 23, 42, 0.86);
+    --topbar-border: rgba(51, 65, 85, 0.8);
+    --sidebar-bg: linear-gradient(180deg, #020617 0%, #111827 100%);
     --sidebar-text: #f8fafc;
-    --shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+    --shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
     --bs-body-color: var(--text);
     --bs-body-bg: var(--bg);
     --bs-emphasis-color: var(--text);
@@ -70,8 +70,8 @@ body {
     font-family: "Inter", "Segoe UI", sans-serif;
     color: var(--text);
     background:
-        radial-gradient(circle at top left, rgba(37,99,235,0.14), transparent 24%),
-        linear-gradient(135deg, #f8fbff 0%, #eef3f8 100%);
+        radial-gradient(circle at top left, rgba(37,99,235,0.24), transparent 24%),
+        linear-gradient(135deg, #020617 0%, #111827 100%);
 }
 
 a {
