@@ -28,10 +28,23 @@
 
 .btn-ghost {
     background: transparent;
-    border: 0;
-    color: var(--muted);
-    min-height: 44px;
+    border: none;
+    color: var(--text) !important;
     min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-ghost:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: var(--text) !important;
+}
+
+.btn-ghost i {
+    color: inherit !important;
+    font-size: 1.15rem;
 }
 
 .theme-toggle {
