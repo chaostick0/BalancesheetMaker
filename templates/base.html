@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
     <title>{% block page_title %}Balance Sheet Maker{% endblock %}</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
@@ -20,113 +22,172 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 </head>
+
 <body>
-    <div class="app-shell">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div>
-                    <p class="eyebrow">Financial Studio</p>
-                    <h3 class="logo">Balance Sheet</h3>
-                    <p class="sidebar-subtitle">Clean, accurate reporting</p>
-                </div>
-                <button class="sidebar-close d-lg-none" id="sidebarClose" type="button" aria-label="Close navigation">×</button>
+<div class="app-shell">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div>
+                <p class="eyebrow">Financial Studio</p>
+                <h3 class="logo">Balance Sheet</h3>
+                <p class="sidebar-subtitle">Clean, accurate reporting</p>
             </div>
 
-            <nav class="sidebar-nav">
-                <a href="/" class="{% if request.path == '/' %}active{% endif %}"><i class="bi bi-house-door"></i> Dashboard</a>
-                <a href="/company" class="{% if request.path == '/company' %}active{% endif %}"><i class="bi bi-building"></i> Company Details</a>
-                <a href="/liabilities" class="{% if request.path == '/liabilities' %}active{% endif %}"><i class="bi bi-clipboard-data"></i> Equity &amp; Liabilities</a>
-                <a href="/assets" class="{% if request.path == '/assets' %}active{% endif %}"><i class="bi bi-cash-coin"></i> Assets</a>
-                <a href="/report" class="{% if request.path == '/report' %}active{% endif %}"><i class="bi bi-file-earmark-text"></i> Final Report</a>
-                <a href="/export" class="{% if request.path.startswith('/export') %}active{% endif %}"><i class="bi bi-download"></i> Export</a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="sidebar-pill">Live insights</div>
-                <p>Built for fast, reliable financial review.</p>
-            </div>
-        </aside>
-
-        <div class="content-area">
-            <header class="topbar">
-                <button class="menu-toggle d-lg-none" id="menuToggle" type="button" aria-label="Open navigation">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div class="topbar-copy">
-                    <p class="eyebrow">Workspace</p>
-                    <h1 class="topbar-title">{% block topbar_title %}Financial reporting workspace{% endblock %}</h1>
-                </div>
-
-                <div class="topbar-actions d-none d-md-flex align-items-center gap-2">
-                    <button class="btn btn-ghost" type="button" id="topbarSearch" data-bs-toggle="tooltip" title="Search this page">
-                        <i class="bi bi-search"></i> Search
-                    </button>
-                    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">🌙</button>
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="quickAddBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-plus-lg"></i> Quick Add
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quickAddBtn">
-                            <li><a class="dropdown-item" href="/assets#asset-form"><i class="bi bi-cash-coin me-2"></i>Add Asset</a></li>
-                            <li><a class="dropdown-item" href="/liabilities#liability-form"><i class="bi bi-clipboard-data me-2"></i>Add Liability</a></li>
-                            <li><a class="dropdown-item" href="/company"><i class="bi bi-building me-2"></i>Edit Company Details</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="topbar-actions-mobile d-flex d-md-none align-items-center gap-2">
-                    <button class="theme-toggle" id="themeToggleMobile" type="button" aria-label="Toggle dark mode">🌙</button>
-                    <div class="dropdown">
-                        <button class="btn btn-ghost" type="button" id="topbarMoreBtn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="More actions">
-                            <i class="bi bi-three-dots-vertical"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="topbarMoreBtn">
-                            <li><button class="dropdown-item" type="button" id="topbarSearchMobile"><i class="bi bi-search me-2"></i>Search this page</button></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/assets#asset-form"><i class="bi bi-cash-coin me-2"></i>Add Asset</a></li>
-                            <li><a class="dropdown-item" href="/liabilities#liability-form"><i class="bi bi-clipboard-data me-2"></i>Add Liability</a></li>
-                            <li><a class="dropdown-item" href="/company"><i class="bi bi-building me-2"></i>Edit Company Details</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </header>
-
-            <main class="content">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        <div class="toast-stack" aria-live="polite" aria-atomic="true">
-                            {% for category, message in messages %}
-                                <div class="toast-card toast-{{ category }} flash-toast" role="status">
-                                    <div class="toast-icon">
-                                        {% if category == 'success' %}✓{% elif category == 'danger' %}⚠{% else %}ℹ{% endif %}
-                                    </div>
-                                    <div class="toast-body">
-                                        <strong>{{ category|title }}</strong>
-                                        <p>{{ message }}</p>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                {% block content %}{% endblock %}
-            </main>
-
-            <footer class="app-footer">
-                <span>© Prantik · July 2026</span>
-            </footer>
+            <button class="sidebar-close d-lg-none"
+                    id="sidebarClose"
+                    type="button"
+                    aria-label="Close navigation">×</button>
         </div>
+
+        <nav class="sidebar-nav">
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                <i class="bi bi-house-door"></i> Dashboard
+            </a>
+
+            <a href="/company" class="{% if request.path == '/company' %}active{% endif %}">
+                <i class="bi bi-building"></i> Company Details
+            </a>
+
+            <a href="/liabilities" class="{% if request.path == '/liabilities' %}active{% endif %}">
+                <i class="bi bi-clipboard-data"></i> Equity &amp; Liabilities
+            </a>
+
+            <a href="/assets" class="{% if request.path == '/assets' %}active{% endif %}">
+                <i class="bi bi-cash-coin"></i> Assets
+            </a>
+
+            <a href="/report" class="{% if request.path == '/report' %}active{% endif %}">
+                <i class="bi bi-file-earmark-text"></i> Final Report
+            </a>
+
+            <a href="/export" class="{% if request.path.startswith('/export') %}active{% endif %}">
+                <i class="bi bi-download"></i> Export
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-pill">Live insights</div>
+            <p>Built for fast, reliable financial review.</p>
+        </div>
+    </aside>
+
+    <div class="content-area">
+
+        <header class="topbar">
+
+            <button class="menu-toggle d-lg-none"
+                    id="menuToggle"
+                    type="button"
+                    aria-label="Open navigation">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="topbar-copy">
+                <p class="eyebrow">Workspace</p>
+                <h1 class="topbar-title">
+                    {% block topbar_title %}Financial reporting workspace{% endblock %}
+                </h1>
+            </div>
+
+            <div class="topbar-actions d-none d-md-flex align-items-center gap-2">
+
+                <button class="btn btn-ghost"
+                        id="topbarSearch"
+                        type="button"
+                        data-bs-toggle="tooltip"
+                        title="Search this page">
+                    <i class="bi bi-search"></i> Search
+                </button>
+
+                <button class="theme-toggle"
+                        id="themeToggle"
+                        type="button"
+                        aria-label="Toggle dark mode">🌙</button>
+
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle"
+                            id="quickAddBtn"
+                            type="button"
+                            data-bs-toggle="dropdown">
+                        <i class="bi bi-plus-lg"></i> Quick Add
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/assets#asset-form"><i class="bi bi-cash-coin me-2"></i>Add Asset</a></li>
+                        <li><a class="dropdown-item" href="/liabilities#liability-form"><i class="bi bi-clipboard-data me-2"></i>Add Liability</a></li>
+                        <li><a class="dropdown-item" href="/company"><i class="bi bi-building me-2"></i>Edit Company Details</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="topbar-actions-mobile d-flex d-md-none align-items-center gap-2">
+
+                <button class="theme-toggle"
+                        id="themeToggleMobile"
+                        type="button"
+                        aria-label="Toggle dark mode">🌙</button>
+
+                <div class="dropdown">
+
+                    <!-- Temporary visibility fix -->
+                    <button
+                        id="topbarMoreBtn"
+                        class="btn btn-ghost"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="More actions"
+                        style="color:#111827 !important;background:transparent;border:none;">
+
+                        <span style="font-size:1.5rem;font-weight:700;line-height:1;">&#8942;</span>
+
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <button class="dropdown-item" type="button" id="topbarSearchMobile">
+                                <i class="bi bi-search me-2"></i> Search this page
+                            </button>
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li><a class="dropdown-item" href="/assets#asset-form"><i class="bi bi-cash-coin me-2"></i>Add Asset</a></li>
+                        <li><a class="dropdown-item" href="/liabilities#liability-form"><i class="bi bi-clipboard-data me-2"></i>Add Liability</a></li>
+                        <li><a class="dropdown-item" href="/company"><i class="bi bi-building me-2"></i>Edit Company Details</a></li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="app-footer">
+            <span>© Prantik · July 2026</span>
+        </footer>
+
     </div>
 
-    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/toast.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/table.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</div>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script src="{{ url_for('static', filename='js/toast.js') }}"></script>
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+<script src="{{ url_for('static', filename='js/table.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
 </body>
 </html>
