@@ -33,6 +33,24 @@
     --sidebar-bg: linear-gradient(180deg, #07111f 0%, #111827 100%);
     --sidebar-text: #f8fafc;
     --shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+    --bs-body-color: var(--text);
+    --bs-body-bg: var(--bg);
+    --bs-emphasis-color: var(--text);
+    --bs-secondary-color: var(--muted);
+    --bs-secondary-bg: var(--surface-strong);
+    --bs-tertiary-bg: var(--surface-soft);
+    --bs-border-color: var(--border);
+    --bs-dropdown-bg: var(--dropdown-bg);
+    --bs-dropdown-color: var(--dropdown-text);
+    --bs-dropdown-link-color: var(--dropdown-text);
+    --bs-dropdown-link-hover-color: var(--dropdown-text);
+    --bs-dropdown-link-hover-bg: var(--dropdown-hover);
+    --bs-dropdown-link-active-bg: var(--accent-soft);
+    --bs-dropdown-link-active-color: var(--text);
+    --bs-modal-bg: var(--surface-strong);
+    --bs-modal-color: var(--text);
+    --bs-tooltip-bg: var(--surface-strong);
+    --bs-tooltip-color: var(--text);
     --radius-xl: 24px;
     --radius-lg: 18px;
     --radius-md: 14px;
@@ -77,6 +95,77 @@ textarea {
     font: inherit;
 }
 
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+small,
+li,
+td,
+th,
+strong,
+blockquote,
+code,
+pre {
+    color: var(--text);
+}
+
+.text-muted,
+.text-secondary,
+.text-body-secondary,
+.text-body-tertiary,
+.form-text,
+.subtitle,
+.eyebrow,
+.page-header p,
+.app-footer,
+.summary-card .label,
+.mobile-summary-strip .label {
+    color: var(--muted) !important;
+}
+
+.bg-white,
+.bg-light,
+.bg-light-subtle,
+.bg-body,
+.bg-body-tertiary {
+    background-color: var(--surface-strong) !important;
+    color: var(--text) !important;
+}
+
+.border,
+.border-top,
+.border-bottom,
+.border-start,
+.border-end,
+.border-1,
+.border-2,
+.border-3 {
+    border-color: var(--border) !important;
+}
+
+.card,
+.list-group-item,
+.modal-content,
+.popover,
+.offcanvas,
+.alert,
+.table,
+.table td,
+.table th,
+.form-control,
+.form-select,
+.input-group-text {
+    background-color: var(--surface-strong);
+    color: var(--text);
+    border-color: var(--border);
+}
+
 :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -116,9 +205,16 @@ html {
 }
 
 .dropdown-item:hover,
-.dropdown-item:focus {
+.dropdown-item:focus,
+.dropdown-item.active,
+.dropdown-item:active {
     background-color: var(--dropdown-hover);
     color: var(--dropdown-text);
+}
+
+.dropdown-item.disabled {
+    color: var(--muted);
+    opacity: 0.7;
 }
 
 .badge-pill {

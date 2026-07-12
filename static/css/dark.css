@@ -56,31 +56,42 @@ body.dark-mode {
 
 body.dark-mode .dropdown-menu,
 body.dark-mode .modal-content,
-body.dark-mode .tooltip-inner {
+body.dark-mode .tooltip-inner,
+body.dark-mode .popover,
+body.dark-mode .offcanvas,
+body.dark-mode .list-group-item,
+body.dark-mode .alert,
+body.dark-mode .card,
+body.dark-mode .table,
+body.dark-mode .table td,
+body.dark-mode .table th,
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode .input-group-text {
     background-color: var(--dropdown-bg);
     color: var(--dropdown-text);
     border-color: var(--border);
 }
 
 body.dark-mode .dropdown-item,
-body.dark-mode .dropdown-item i {
+body.dark-mode .dropdown-item i,
+body.dark-mode .dropdown-toggle,
+body.dark-mode .dropdown-toggle::after {
     color: var(--dropdown-text);
 }
 
 body.dark-mode .dropdown-item:hover,
-body.dark-mode .dropdown-item:focus {
+body.dark-mode .dropdown-item:focus,
+body.dark-mode .dropdown-item.active,
+body.dark-mode .dropdown-item:active {
     background-color: var(--dropdown-hover);
     color: var(--dropdown-text);
 }
 
-body.dark-mode .dropdown-divider {
-    border-color: var(--border);
-}
-
-body.dark-mode .form-control,
-body.dark-mode .form-select {
-    background-color: var(--input-bg);
-    color: var(--input-text);
+body.dark-mode .dropdown-divider,
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer,
+body.dark-mode .popover-header {
     border-color: var(--border);
 }
 
