@@ -71,3 +71,28 @@
         min-width: 44px;
     }
 }
+/* ---------- Mobile More Button ---------- */
+
+#topbarMoreBtn{
+    width:44px;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:transparent !important;
+    border:none !important;
+
+    color:#111827 !important;
+}
+
+#topbarMoreBtn i{
+    color:#111827 !important;
+    font-size:22px !important;
+    opacity:1 !important;
+}
+
+body.dark-mode #topbarMoreBtn,
+body.dark-mode #topbarMoreBtn i{
+    color:#f8fafc !important;
+}
