@@ -22,7 +22,7 @@
 
 .kpi-card {
     border-radius: 20px;
-    padding: 18px;
+    padding: 22px;
     color: white;
     position: relative;
     overflow: hidden;
@@ -186,4 +186,15 @@
 .mobile-summary-strip .value {
     font-size: 0.98rem;
     font-weight: 800;
+}
+@media (max-width: 1200px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
 }
